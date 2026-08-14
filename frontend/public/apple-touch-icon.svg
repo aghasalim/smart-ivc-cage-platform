@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <!-- iOS home-screen icon — must be a full square w/o transparency outside the rounded corners -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="36" fill="url(#bg)"/>
+
+  <g stroke="#10b981" stroke-width="5" stroke-linecap="round" opacity="0.5">
+    <line x1="34" y1="48" x2="34" y2="138"/>
+    <line x1="60" y1="48" x2="60" y2="138"/>
+    <line x1="120" y1="48" x2="120" y2="138"/>
+    <line x1="146" y1="48" x2="146" y2="138"/>
+    <line x1="30" y1="48" x2="150" y2="48"/>
+    <line x1="30" y1="138" x2="150" y2="138"/>
+  </g>
+
+  <g fill="none" stroke="url(#accent)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="90" cy="42" r="9" fill="url(#accent)"/>
+    <path d="M90 54 L90 80 L78 90 L102 90 L90 80"/>
+    <line x1="72" y1="110" x2="108" y2="110"/>
+    <path d="M60 126 L120 126"/>
+  </g>
+
+  <circle cx="138" cy="138" r="9" fill="#34d399"/>
+  <text x="90" y="170" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#10b981" letter-spacing="2">IVC</text>
+</svg>

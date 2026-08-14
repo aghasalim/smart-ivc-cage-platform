@@ -1,0 +1,138 @@
+{
+  "val_macro_f1": 0.9953468851177106,
+  "test_macro_f1": 0.9957463785922034,
+  "test_classification_report": {
+    "active": {
+      "precision": 0.9991266375545852,
+      "recall": 0.9982547993019197,
+      "f1-score": 0.9986905281536447,
+      "support": 1146.0
+    },
+    "drinking": {
+      "precision": 0.99375,
+      "recall": 1.0,
+      "f1-score": 0.9968652037617555,
+      "support": 159.0
+    },
+    "eating": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 100.0
+    },
+    "exploring": {
+      "precision": 0.9978902953586498,
+      "recall": 0.9978902953586498,
+      "f1-score": 0.9978902953586498,
+      "support": 474.0
+    },
+    "resting": {
+      "precision": 0.9979716024340771,
+      "recall": 0.9781312127236581,
+      "f1-score": 0.9879518072289156,
+      "support": 503.0
+    },
+    "sleeping": {
+      "precision": 0.9797047970479705,
+      "recall": 0.9981203007518797,
+      "f1-score": 0.9888268156424581,
+      "support": 532.0
+    },
+    "stereotyped": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 86.0
+    },
+    "accuracy": 0.995,
+    "macro avg": {
+      "precision": 0.9954919046278975,
+      "recall": 0.9960566583051582,
+      "f1-score": 0.9957463785922034,
+      "support": 3000.0
+    },
+    "weighted avg": {
+      "precision": 0.9950626815638052,
+      "recall": 0.995,
+      "f1-score": 0.9949988458733761,
+      "support": 3000.0
+    }
+  },
+  "test_confusion_matrix": [
+    [
+      1144,
+      1,
+      0,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      159,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      100,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      473,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      492,
+      11,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      1,
+      531,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      86
+    ]
+  ],
+  "classes": [
+    "active",
+    "drinking",
+    "eating",
+    "exploring",
+    "resting",
+    "sleeping",
+    "stereotyped"
+  ],
+  "n_train": 14450,
+  "n_val": 2550,
+  "n_test": 3000
+}

@@ -1,0 +1,17 @@
+{
+  "name": "IVC Cage Dashboard",
+  "short_name": "IVC Cage",
+  "description": "Integrated Intelligent Precision Metabolic & Behavioural IVC Cage — researcher dashboard with live DHT11 environment, camera streams, AI behaviour labels, and remote-deploy pipeline.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "lang": "en",
+  "categories": ["productivity", "utilities", "education", "science"],
+  "icons": [
+    { "src": "/favicon.svg",          "sizes": "any",       "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/apple-touch-icon.svg", "sizes": "180x180",   "type": "image/svg+xml", "purpose": "maskable any" }
+  ]
+}

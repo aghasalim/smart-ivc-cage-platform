@@ -1,0 +1,15 @@
+[Unit]
+Description=IVC Cage Arduino serial bridge
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+WorkingDirectory=%h/arduino-bridge
+ExecStart=/usr/bin/python3 %h/arduino-bridge/bridge.py
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

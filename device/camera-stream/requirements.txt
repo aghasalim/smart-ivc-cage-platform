@@ -1,0 +1,11 @@
+# IVC camera-stream service deps (installed system-wide by pi-deploy.sh)
+# Keep this list small — the service runs under /usr/bin/python3 on the Pi.
+
+flask>=3.0
+pyserial>=3.5
+
+# GPIO control for the RC-toy mouse (Pi only). gpiozero is the user-facing
+# API; lgpio is the recommended Pi 5 backend. Both can coexist with the
+# camera + Arduino code already running in this service.
+gpiozero>=2.0
+lgpio>=0.2.2

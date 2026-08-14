@@ -1,0 +1,5 @@
+Contact: mailto:neapalimg@gmail.com
+Preferred-Languages: en, nl
+Canonical: https://example.org/.well-known/security.txt
+Policy: https://example.org/about
+# Report security issues responsibly. We acknowledge within 72h.

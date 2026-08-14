@@ -1,0 +1,13 @@
+[Unit]
+Description=IVC Pi deploy timer — check GitHub for new commits every minute
+
+[Timer]
+# First fire 30s after boot, then every 60s
+OnBootSec=30s
+OnUnitInactiveSec=60s
+AccuracySec=10s
+# If the Pi was offline at fire time, run as soon as it's back online
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,75 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node / frontend
+node_modules/
+dist/
+.vite/
+.next/
+.turbo/
+
+# Logs
+*.log
+logs/
+
+# Local DBs & caches
+*.sqlite
+*.sqlite-journal
+*.db
+data/local/
+
+# Env & secrets
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# Build artifacts
+*.pyc
+*.pyo
+build/
+
+# AI artefacts
+ai/models/checkpoints/
+ai/data/raw/
+*.pt
+*.ckpt
+*.h5
+# Large model weights anywhere in the tree (kept out of git; fetched/deployed
+# out-of-band). Covers the YOLO .onnx exports and the sklearn state/behaviour
+# .pkl classifiers, incl. the "(1)" download duplicates that cluttered git status.
+*.onnx
+*.pkl
+
+# IVC camera pipeline — large trained model files
+ai/models/behavioral_monitoring/outputs/*.pkl
+ai/inference/behavioral_monitoring/outputs/*.pkl
+
+# Misc
+.cache/
+coverage/
+
+# IDE session metadata
+.claude/
+
+
+# IVC pi-inference behavioural models — deployed to the Pi via scp (too large for git)
+device/pi-inference/*.pkl

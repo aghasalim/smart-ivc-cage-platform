@@ -1,0 +1,11 @@
+[Unit]
+Description=IVC Pi deploy — git pull + redeploy on every tick
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/grazwis/IndustryProject
+ExecStart=/home/grazwis/IndustryProject/scripts/pi-deploy.sh
+# 5 min hard cap so a stuck npm install can't pile up
+TimeoutStartSec=300

@@ -1,0 +1,17 @@
+[Unit]
+Description=IVC Cage multi-camera MJPEG streaming service
+After=network.target
+
+[Service]
+Type=simple
+User=grazwis
+WorkingDirectory=/home/grazwis/camera-stream
+EnvironmentFile=-/home/grazwis/camera-stream/env
+ExecStart=/usr/bin/python3 /home/grazwis/camera-stream/server.py
+Restart=on-failure
+RestartSec=3
+StandardOutput=append:/home/grazwis/camera-stream/server.log
+StandardError=append:/home/grazwis/camera-stream/server.log
+
+[Install]
+WantedBy=multi-user.target
