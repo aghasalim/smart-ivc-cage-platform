@@ -1,0 +1,50 @@
+name: ivc-cage
+
+services:
+  backend:
+    build: ./backend
+    container_name: ivc-backend
+    env_file: .env
+    environment:
+      - DATABASE_URL=sqlite:////app/data/ivc.db
+    ports:
+      - "8000:8000"
+    volumes:
+      - backend_data:/app/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000
+        VITE_WS_URL: ws://localhost:8000/ws
+    container_name: ivc-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  simulator:
+    build: ./device/simulator
+    container_name: ivc-simulator
+    env_file: .env
+    environment:
+      - SIM_BACKEND_URL=http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+
+volumes:
+  backend_data:

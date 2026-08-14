@@ -1,0 +1,9 @@
+{
+  "rf_weight": 0.7,
+  "sgd_weight": 0.3,
+  "rf_features": 9,
+  "sgd_features": 13,
+  "architecture": "weighted_probability_vote",
+  "rf_model": "outputs/state_classifier.pkl",
+  "sgd_model": "outputs/sgd_v2_classifier.pkl"
+}

@@ -1,0 +1,20 @@
+[Unit]
+Description=IVC Cage on-Pi YOLOv8 inference (mouse detector)
+After=network.target ivc-cameras.service ivc-backend.service
+Wants=ivc-cameras.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/pi-inference
+EnvironmentFile=%h/pi-inference/.env
+ExecStart=/usr/bin/python3 %h/pi-inference/inference.py
+Restart=on-failure
+RestartSec=5
+# Inference uses ~500-800 MB of resident RAM (torch CPU + model + cv2).
+# Don't let it OOM-kill anything critical.
+Nice=5
+StandardOutput=append:%h/pi-inference/inference.log
+StandardError=append:%h/pi-inference/inference.log
+
+[Install]
+WantedBy=default.target

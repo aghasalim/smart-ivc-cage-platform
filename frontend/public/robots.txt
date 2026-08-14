@@ -1,0 +1,3 @@
+# IVC Cage Dashboard — researcher-only, no public indexing
+User-agent: *
+Disallow: /

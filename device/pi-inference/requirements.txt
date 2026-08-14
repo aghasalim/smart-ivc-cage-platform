@@ -1,0 +1,19 @@
+# On-Pi YOLOv8 inference deps. Installed system-wide by pi-deploy.sh
+# with --break-system-packages (Debian Bookworm marks the env "externally
+# managed"; that's the documented workaround).
+#
+# `ultralytics` pulls torch CPU + torchvision + numpy + pillow on first
+# install — expect ~400 MB on disk and a couple of minutes on a Pi 5.
+ultralytics>=8.0.0
+opencv-python-headless>=4.8.0
+numpy>=1.24
+
+# NCNN: Tencent's ARM-optimised inference engine. Used by inference.py's
+# load_optimised_model() — gives a 2-3× speedup on Pi 5 vs the torch CPU
+# backend. Pure C++ with hand-tuned NEON kernels for Cortex-A76. The Python
+# wheel has ARM64 builds on PyPI, so no compilation needed.
+ncnn>=1.0.20240820
+
+# Behavioural-monitoring handoff: Hungarian tracker (scipy) + classifier loading (joblib)
+scipy>=1.11
+joblib>=1.3

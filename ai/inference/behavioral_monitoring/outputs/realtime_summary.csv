@@ -1,0 +1,4 @@
+timestamp,dominant_state,total_distance_px,active_frames,inactive_frames,dominant_zone,thigmotaxis_ratio,stereotypy_flag
+00:00:40,Wake / Active,0.0,300,0,Center,0.0,False
+00:01:20,Wake / Active,0.0,300,0,Center,0.0,False
+00:01:52,Wake / Active,0.0,245,0,Center,0.0,False

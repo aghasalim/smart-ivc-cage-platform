@@ -1,0 +1,17 @@
+[Unit]
+Description=IVC Cage multi-camera MJPEG streaming service
+After=network.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/camera-stream
+EnvironmentFile=-/home/pi/camera-stream/env
+ExecStart=/usr/bin/python3 /home/pi/camera-stream/server.py
+Restart=on-failure
+RestartSec=3
+StandardOutput=append:/home/pi/camera-stream/server.log
+StandardError=append:/home/pi/camera-stream/server.log
+
+[Install]
+WantedBy=multi-user.target

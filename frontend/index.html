@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <!-- Apply the saved theme before first paint to avoid a flash.
+         Keep the storage key + logic in sync with src/store/theme.ts. -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('ivc-theme') || 'dark';
+          var dark = t === 'dark' || (t === 'system' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches);
+          var root = document.documentElement;
+          root.classList.toggle('dark', dark);
+          root.style.colorScheme = dark ? 'dark' : 'light';
+        } catch (e) {}
+      })();
+    </script>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Primary identity ------------------------------------------------ -->
+    <title>IVC Cage Dashboard · example.org</title>
+    <meta name="description" content="Integrated Intelligent Precision Metabolic & Behavioural IVC Cage — live DHT11 environment, camera streams, AI behaviour labels, and a Cloudflare-tunnelled remote-deploy pipeline." />
+    <meta name="application-name" content="IVC Cage" />
+    <meta name="author" content="Industry Project Team" />
+    <meta name="keywords" content="IVC cage, animal research, DHT11, Raspberry Pi, FastAPI, behaviour analysis, metabolic monitoring" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#10b981" media="(prefers-color-scheme: light)" />
+
+    <!-- Icons ------------------------------------------------------------ -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="mask-icon" href="/favicon-mono.svg" color="#10b981" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.svg" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="IVC Cage" />
+    <meta name="mobile-web-app-capable" content="yes" />
+
+    <!-- PWA manifest ----------------------------------------------------- -->
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Open Graph / social cards --------------------------------------- -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="IVC Cage Dashboard" />
+    <meta property="og:title" content="IVC Cage Dashboard" />
+    <meta property="og:description" content="Live DHT11 environment, camera streams, AI behaviour labels — running on a Raspberry Pi through a Cloudflare Tunnel." />
+    <meta property="og:url" content="https://example.org/" />
+    <meta property="og:image" content="https://example.org/apple-touch-icon.svg" />
+    <meta property="og:locale" content="en_GB" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="IVC Cage Dashboard" />
+    <meta name="twitter:description" content="Researcher-grade live monitoring for the Integrated Intelligent Precision IVC Cage." />
+    <meta name="twitter:image" content="https://example.org/apple-touch-icon.svg" />
+
+    <!-- Performance / preconnects --------------------------------------- -->
+    <link rel="preconnect" href="https://cam.example.org" crossorigin />
+    <link rel="dns-prefetch" href="https://cam.example.org" />
+
+    <!-- Security (declarative, complementing backend CSP) --------------- -->
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <meta name="format-detection" content="telephone=no" />
+  </head>
+  <body class="min-h-screen bg-background text-foreground antialiased">
+    <noscript>
+      <div style="padding:2rem;font-family:system-ui;text-align:center;color:#e2e8f0;background:#0f172a;min-height:100vh">
+        <h1>JavaScript required</h1>
+        <p>The IVC Cage Dashboard is a single-page application. Please enable JavaScript to continue.</p>
+      </div>
+    </noscript>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "state_features": [
+    "distance_from_previous_px",
+    "movement_smooth",
+    "is_inactive_smooth_int",
+    "motion_area",
+    "dist_roll_mean_15",
+    "dist_roll_std_15",
+    "area_roll_mean_15",
+    "zone_enc",
+    "quiet_streak"
+  ],
+  "behavior_features": [
+    "distance_from_previous_px",
+    "movement_smooth",
+    "is_inactive_smooth_int",
+    "motion_area",
+    "dist_roll_mean_15",
+    "dist_roll_std_15",
+    "area_roll_mean_15",
+    "zone_enc"
+  ],
+  "zone_to_int": {
+    "TopLeft": 0,
+    "TopCenter": 1,
+    "TopRight": 2,
+    "MidLeft": 3,
+    "Center": 4,
+    "MidRight": 5,
+    "BotLeft": 6,
+    "BotCenter": 7,
+    "BotRight": 8
+  },
+  "rolling_window": 15
+}

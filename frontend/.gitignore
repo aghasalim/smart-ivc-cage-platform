@@ -1,0 +1,9 @@
+.vercel
+node_modules
+dist
+*.tsbuildinfo
+.env
+.env.local
+
+# Real deployment targets stay local; commit only the .example.
+.env.production

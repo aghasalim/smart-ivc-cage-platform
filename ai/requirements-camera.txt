@@ -1,0 +1,34 @@
+# IVC camera pipeline dependencies
+# Install in a separate virtual environment — numpy and pandas versions differ
+# from requirements.txt (synthetic-model pipeline).
+# See README.md for details.
+
+# Computer vision
+opencv-python==4.13.0.92
+
+# Numerical / data
+numpy==2.4.6
+pandas==3.0.3
+scipy==1.17.1
+pillow==12.2.0
+
+# Machine learning
+scikit-learn==1.8.0
+joblib==1.5.3
+
+# Plotting
+matplotlib==3.10.9
+
+# OCR (timestamp extraction from video frames)
+# Also requires Tesseract binary: https://github.com/UB-Mannheim/tesseract/wiki
+pytesseract==0.3.13
+
+# System monitoring
+psutil==7.2.2
+
+# GPIO control for the RC-toy mouse (Pi only — mouse_control.py auto-falls
+# back to a dryrun logging mode on Mac/Windows, so the rest of the camera
+# pipeline still runs in development.)
+gpiozero==2.0.1
+# lgpio is gpiozero's recommended Pi 5 backend; harmless on other platforms.
+lgpio==0.2.2.0; sys_platform == "linux"

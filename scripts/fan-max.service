@@ -1,0 +1,29 @@
+[Unit]
+Description=Force Raspberry Pi 5 fan to maximum speed
+After=multi-user.target
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=5
+# Re-write the cooling-device state and PWM register every 2 s. The Pi 5
+# thermal governor will otherwise pull the fan back to whatever it considers
+# "appropriate", so we have to keep over-writing.
+#
+#   cur_state=4   — highest of the 5 cooling states (0–4)
+#   pwm1=255      — maximum PWM duty cycle (0–255)
+#
+# Errors are suppressed because some kernels expose hwmon at a different
+# numeric index (hwmon0/1/2) — we just try every hwmonN/pwm1 and let the
+# good one stick.
+ExecStart=/bin/bash -c '\
+  while true; do \
+    echo 4 > /sys/class/thermal/cooling_device0/cur_state 2>/dev/null; \
+    for h in /sys/class/hwmon/hwmon*/pwm1; do \
+      echo 255 > "$h" 2>/dev/null; \
+    done; \
+    sleep 2; \
+  done'
+
+[Install]
+WantedBy=multi-user.target
