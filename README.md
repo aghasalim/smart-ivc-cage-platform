@@ -32,6 +32,14 @@ the day). The model then learns to recover those rules. Testing on a held-out
 split of the *same generator* measures how separable the generator made its own
 classes — not whether the system can classify a real mouse.
 
+![why the synthetic macro-F1 is meaningless](ai/reports/figures/synthetic-separability.png)
+
+Left: the generator writes each behaviour as its own band of `movement_cm`. Sleeping
+never exceeds 0.3 cm, resting stops at 1.0, exploring starts at 6.0. Right: an
+unpruned decision tree on those features reaches macro-F1 0.9936, which is the
+reported random-forest number to within 0.003. The classifier is recovering the
+rules the generator wrote, and nothing else.
+
 Two independent signals say the task is close to trivial:
 
 | model | macro-F1 (held-out synthetic) |
@@ -112,26 +120,40 @@ CORP, plus an RFC 9116 `security.txt`. CI runs `pip-audit` on every push.
 
 ## Architecture
 
-```
-   Browser ──HTTPS/WSS──► Cloudflare Tunnel edge ──► Raspberry Pi 5
-                          (no inbound ports)          ├── FastAPI backend + SQLite
-                                                      ├── React dashboard (SPA)
-                                                      ├── MJPEG camera service
-                                                      └── USB serial ▼
-                                                          Arduino Mega 2560
-                                                          ├── 3× HX711 load cells
-                                                          │    (food / water / animal)
-                                                          ├── DHT11  (T / RH)
-                                                          ├── YF-S401 flow sensor
-                                                          ├── food-gate servo
-                                                          └── pump + solenoid relays
-                                          O₂ (JXW-02, USB) · CO₂ (MH-Z19C, UART)
+```mermaid
+flowchart LR
+    B["Browser<br/>PWA, 4 languages"]
+    CF["Cloudflare Tunnel<br/>no inbound ports"]
+
+    subgraph PI["Raspberry Pi 5 — tolerates jitter"]
+        API["FastAPI + SQLite<br/>JWT, WebSocket fan-out"]
+        UI["React 18 dashboard"]
+        CAM["MJPEG camera service"]
+        INF["Inference<br/>behaviour + MAD anomaly"]
+    end
+
+    subgraph MEGA["Arduino Mega 2560 — owns the real-time loop"]
+        LC["3x HX711 load cells<br/>food / water / animal"]
+        DHT["DHT11 · T and RH"]
+        FLOW["YF-S401 flow sensor"]
+        ACT["Food-gate servo<br/>pump + solenoid relays"]
+    end
+
+    GAS["O2 JXW-02 · USB<br/>CO2 MH-Z19C · UART"]
+
+    B <-->|HTTPS / WSS| CF
+    CF <--> API
+    API --- UI
+    API --- CAM
+    API --- INF
+    API <-->|USB serial| MEGA
+    GAS --> API
+    LC & DHT & FLOW --> ACT
 ```
 
-The Mega owns the real-time loop — sensors and actuators on a fixed cadence,
-with load-cell calibration persisted in EEPROM so it survives a power cycle. The
-Pi owns everything that can tolerate jitter: HTTP, WebSocket fan-out, storage,
-inference and the UI.
+The Mega owns anything with a deadline; the Pi owns anything that can wait. Load-cell
+calibration lives in the Mega's EEPROM so it survives a power cycle, and the dosing
+loop keeps running if the Pi reboots mid-experiment.
 
 | layer | stack |
 |---|---|
