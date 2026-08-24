@@ -10,6 +10,7 @@ bands in a single feature, and a plain decision tree recovers them.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import matplotlib
@@ -89,10 +90,139 @@ def separability(out: Path) -> Path:
     return out
 
 
+def confusion(out: Path) -> Path:
+    """The classifier's confusion matrix, on the synthetic split.
+
+    Included for completeness rather than as a result. The generator wrote these
+    classes as disjoint feature bands, so a near-diagonal matrix here says the
+    model recovered the generator's rules -- see the separability figure for why
+    that is not evidence about a real mouse.
+    """
+    data = json.loads((ROOT / "ai" / "reports" / "metrics.json").read_text())
+    matrix = np.array(data["test_confusion_matrix"], dtype=float)
+    classes = data["classes"]
+    normalised = matrix / matrix.sum(axis=1, keepdims=True)
+
+    figure, ax = plt.subplots(figsize=(7.6, 6.4))
+    image = ax.imshow(normalised, cmap="Blues", vmin=0, vmax=1)
+    ax.set_xticks(range(len(classes)))
+    ax.set_xticklabels(classes, rotation=35, ha="right", fontsize=9)
+    ax.set_yticks(range(len(classes)))
+    ax.set_yticklabels(classes, fontsize=9)
+    ax.set_xlabel("predicted")
+    ax.set_ylabel("true")
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            if matrix[i, j]:
+                ax.text(j, i, f"{int(matrix[i, j])}", ha="center", va="center",
+                        fontsize=8,
+                        color="white" if normalised[i, j] > 0.5 else "0.2")
+    figure.colorbar(image, ax=ax, fraction=0.045, pad=0.03, label="row-normalised")
+    ax.set_title(
+        f"Test split, macro-F1 {data['test_macro_f1']:.3f}.\n"
+        "Synthetic data -- this measures rule recovery, not behaviour.",
+        fontsize=10,
+    )
+    figure.tight_layout()
+    figure.savefig(out, dpi=110, bbox_inches="tight")
+    plt.close(figure)
+    return out
+
+
+def online_agreement(out: Path) -> Path:
+    """How closely the online learner tracks the offline model over a session.
+
+    The SGD variants update on the stream; the random forest is fixed. Cumulative
+    agreement is the practical question -- whether the thing running on the Pi
+    stays close to the thing that was validated offline.
+    """
+    logs = {
+        "sgd": "sgd_learning_log.csv",
+        "sgd (threshold)": "sgd_threshold_learning_log.csv",
+        "sgd v2": "sgd_v2_learning_log.csv",
+        "ensemble": "ensemble_learning_log.csv",
+    }
+    directory = ROOT / "ai" / "data" / "behavioral_monitoring" / "outputs"
+
+    figure, ax = plt.subplots(figsize=(10, 4.6))
+    for label, filename in logs.items():
+        path = directory / filename
+        if not path.exists():
+            continue
+        table = pd.read_csv(path)
+        ax.plot(table.window, table.cumulative_agreement_pct, lw=1.8, label=label)
+    ax.set_xlabel("window")
+    ax.set_ylabel("cumulative agreement with the offline model (%)")
+    ax.set_ylim(0, 102)
+    ax.set_title(
+        "Online learners against the fixed random forest, over one session.",
+        fontsize=10,
+    )
+    ax.legend(frameon=False, fontsize=9)
+    ax.spines[["top", "right"]].set_visible(False)
+    figure.tight_layout()
+    figure.savefig(out, dpi=110, bbox_inches="tight")
+    plt.close(figure)
+    return out
+
+
+def behaviour_timeline(out: Path) -> Path:
+    """A real session, as the dashboard sees it.
+
+    Dominant behaviour state per window alongside movement and thigmotaxis --
+    wall-hugging, a standard anxiety proxy in rodent work. This is camera output
+    from the actual rig, not the synthetic generator.
+    """
+    table = pd.read_csv(
+        ROOT / "ai" / "data" / "behavioral_monitoring" / "outputs"
+        / "behavior_summary.csv"
+    )
+    states = list(dict.fromkeys(table.dominant_state))
+    codes = [states.index(s) for s in table.dominant_state]
+
+    figure, (top, bottom) = plt.subplots(
+        2, 1, figsize=(11.5, 5.6), sharex=True,
+        gridspec_kw={"height_ratios": [1, 2]},
+    )
+    top.scatter(table.window_start_frame, codes, c=codes, cmap="tab10", s=12)
+    top.set_yticks(range(len(states)))
+    top.set_yticklabels(states, fontsize=8)
+    top.set_title("dominant behaviour state per window", fontsize=10)
+    top.spines[["top", "right"]].set_visible(False)
+
+    bottom.plot(table.window_start_frame, table.total_distance_px, lw=1.2,
+                color="#2166ac", label="distance moved (px)")
+    twin = bottom.twinx()
+    twin.plot(table.window_start_frame, table.thigmotaxis_ratio, lw=1.2,
+              color="#b2182b", alpha=0.75, label="thigmotaxis ratio")
+    twin.set_ylabel("thigmotaxis ratio", color="#b2182b")
+    twin.tick_params(axis="y", labelcolor="#b2182b")
+    bottom.set_xlabel("frame")
+    bottom.set_ylabel("distance moved (px)", color="#2166ac")
+    bottom.tick_params(axis="y", labelcolor="#2166ac")
+    bottom.spines[["top"]].set_visible(False)
+    twin.spines[["top"]].set_visible(False)
+
+    figure.suptitle(
+        f"{len(table)} windows from a real recording. Thigmotaxis is wall-hugging, "
+        "a standard anxiety proxy.",
+        fontsize=10, y=0.02, color="0.35",
+    )
+    figure.tight_layout(rect=(0, 0.05, 1, 1))
+    figure.savefig(out, dpi=110, bbox_inches="tight")
+    plt.close(figure)
+    return out
+
+
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    path = separability(OUT / "synthetic-separability.png")
-    print(f"wrote {path.relative_to(ROOT)}")
+    for path in (
+        separability(OUT / "synthetic-separability.png"),
+        confusion(OUT / "confusion.png"),
+        online_agreement(OUT / "online-agreement.png"),
+        behaviour_timeline(OUT / "behaviour-timeline.png"),
+    ):
+        print(f"wrote {path.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
