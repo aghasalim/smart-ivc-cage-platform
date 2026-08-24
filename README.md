@@ -64,6 +64,26 @@ approval.
 
 ---
 
+### Behaviour monitoring on real recordings
+
+![a real session, as the dashboard sees it](ai/reports/figures/behaviour-timeline.png)
+
+284 windows of camera output from the actual rig, which is the part of the AI
+stack that is not synthetic. Thigmotaxis is wall-hugging, a standard anxiety proxy
+in rodent work, and it is tracked alongside movement because either alone is
+ambiguous.
+
+![online learners against the fixed offline model](ai/reports/figures/online-agreement.png)
+
+The SGD variants update on the stream while the random forest stays fixed. What
+matters operationally is whether the thing running on the Pi stays close to the
+thing that was validated offline.
+
+![confusion matrix on the synthetic test split](ai/reports/figures/confusion.png)
+
+Included for completeness, and it should be read against the separability figure
+above rather than on its own.
+
 ## The engineering I would actually point at
 
 ### Closed-loop volumetric water dosing
