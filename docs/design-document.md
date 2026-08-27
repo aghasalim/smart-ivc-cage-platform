@@ -1,4 +1,4 @@
-# Design Document — Intelligent IVC Cage
+# Design Document, Intelligent IVC Cage
 
 **Project:** Integrated Intelligent Precision Metabolic & Behavioral IVC Cage
 **Client:** the industry partner (`contact@example.org`)
@@ -23,15 +23,15 @@ The hardware is described in the client brief; this repository contains the **co
 | ID | Requirement | Priority | Source |
 |---|---|---|---|
 | FR-01 | Measure actual food intake = delivered − remaining − wasted | MUST | Brief §4 |
-| FR-02 | Restrict feeding to a configurable nocturnal window (default 23:00 – 00:30) | MUST | Brief §7 |
+| FR-02 | Restrict feeding to a configurable nocturnal window (default 23:00 to 00:30) | MUST | Brief §7 |
 | FR-03 | Measure water intake with 0.01 mL precision and zero evaporation loss | MUST | Brief §4 |
 | FR-04 | Capture infrared video + grid position; classify behaviour | MUST | Brief §5 |
 | FR-05 | Measure VO₂, VCO₂, RER, and EE in a closed-circuit configuration | MUST | Brief §6 |
 | FR-05b | Measure cage environment (T/RH) with DHT11; display live in header | SHOULD | UX research |
-| FR-06 | Authenticate researchers; only authenticated calls accepted | MUST | Rubric — Connect |
-| FR-07 | Provide a researcher dashboard with real-time + historical views | MUST | Rubric — Design |
+| FR-06 | Authenticate researchers; only authenticated calls accepted | MUST | Rubric, Connect |
+| FR-07 | Provide a researcher dashboard with real-time + historical views | MUST | Rubric, Design |
 | FR-08 | Alert researcher when daily intake falls below threshold | SHOULD | UX research |
-| FR-09 | Multi-cage support (1–N cages on one platform) | SHOULD | UX research |
+| FR-09 | Multi-cage support (1, N cages on one platform) | SHOULD | UX research |
 | FR-10 | Export data for downstream statistical analysis (CSV) | SHOULD | UX research |
 
 ### 2.2 Non-functional requirements
@@ -44,7 +44,7 @@ The hardware is described in the client brief; this repository contains the **co
 | NFR-04 | Recover from a backend restart with no data loss | 100% (SQLite WAL) |
 | NFR-05 | Run on a Raspberry Pi 5 (8 GB) as a single self-contained device | RAM ≤ 2 GB |
 | NFR-06 | OWASP Top-10 controls applied (input validation, JWT, security headers) | All applicable items |
-| NFR-07 | Auto-deploy from `main` without operator intervention | ≤ 60 s from push to live |
+| NFR-07 | Auto-deploy from`main` without operator intervention | ≤ 60 s from push to live |
 | NFR-08 | Publicly reachable without exposing inbound ports | Cloudflare Tunnel |
 
 ### 2.3 Out of scope
@@ -57,17 +57,17 @@ The hardware is described in the client brief; this repository contains the **co
 
 ## 3. User personas
 
-### 3.1 Dr. Elena — Principal Investigator
+### 3.1 Dr. Elena, Principal Investigator
 - Wants a daily overview of every cage.
 - Cares about anomalies (low intake, abnormal RER, unusual activity).
 - Will export data for SPSS / R.
 
-### 3.2 Marc — Research Technician
+### 3.2 Marc, Research Technician
 - Operates the cages day-to-day.
 - Configures feeding windows, refills feed/water.
 - Will use the dashboard the most.
 
-### 3.3 Sofia — Lab Auditor
+### 3.3 Sofia, Lab Auditor
 - Periodically checks that data is being recorded correctly.
 - Needs read-only access and an audit log.
 
@@ -79,19 +79,19 @@ The hardware is described in the client brief; this repository contains the **co
 
 - **Primary palette:** slate-900 background, emerald-500 accent for live data, amber-500 for warnings, rose-500 for alerts.
 - **Typography:** Inter for UI, JetBrains Mono for numeric readings.
-- **Density:** information-dense but never crowded — 24 px gutters, 8 px line-height baseline.
+- **Density:** information-dense but never crowded, 24 px gutters, 8 px line-height baseline.
 - **Iconography:** Lucide icons (consistent stroke width).
-- **Components:** shadcn/ui — Radix-based, accessible by default.
+- **Components:** shadcn/ui, Radix-based, accessible by default.
 - **Dark mode:** primary surface; light mode supported.
 
 ### 4.2 Key screens
 
-1. **Overview** — grid of cage cards (one per cage) with key metrics: last intake, last activity, RER, alerts.
-2. **Cage detail** — tabs for Feeding, Water, Metabolic, Behaviour, History, Settings.
-3. **Live feed** — real-time chart (last 15 min) of activity, RER, intake delta.
-4. **Schedule** — visual editor for feeding windows.
-5. **Reports** — daily/weekly summary, CSV export.
-6. **Settings** — users, alert thresholds, sensor calibration.
+1. **Overview**: grid of cage cards (one per cage) with key metrics: last intake, last activity, RER, alerts.
+2. **Cage detail**: tabs for Feeding, Water, Metabolic, Behaviour, History, Settings.
+3. **Live feed**: real-time chart (last 15 min) of activity, RER, intake delta.
+4. **Schedule**: visual editor for feeding windows.
+5. **Reports**: daily/weekly summary, CSV export.
+6. **Settings**: users, alert thresholds, sensor calibration.
 
 ### 4.3 Responsive behaviour
 
@@ -113,16 +113,16 @@ The hardware is described in the client brief; this repository contains the **co
 The full software architecture is in [architecture.md](architecture.md);
 the hardware analysis is in [HARDWARE.md](HARDWARE.md). At a glance:
 
-- **Device** — Raspberry Pi 5 + Arduino Mega 2560 + USB cameras + DHT11.
-- **Device → Backend** — HTTPS / JSON; sensor packets every 5 s; JWT-authenticated.
-- **Backend** — FastAPI (Python 3.13), SQLite (WAL mode), background aggregator, WebSocket fan-out.
-- **AI** — *two* models running in the aggregator loop:
+- **Device**: Raspberry Pi 5 + Arduino Mega 2560 + USB cameras + DHT11.
+- **Device → Backend**: HTTPS / JSON; sensor packets every 5 s; JWT-authenticated.
+- **Backend**: FastAPI (Python 3.13), SQLite (WAL mode), background aggregator, WebSocket fan-out.
+- **AI**: *two* models running in the aggregator loop:
   1. Behaviour classifier (scikit-learn HistGradientBoosting, macro-F1 0.996).
   2. Streaming anomaly detector (MAD-based, per-cage online baseline).
-- **Frontend** — React 18 + Vite + Tailwind + shadcn/ui; REST + WebSocket; TanStack Query.
-- **Public exposure** — Cloudflare Tunnel: `example.org` + `cam.example.org`,
+- **Frontend**: React 18 + Vite + Tailwind + shadcn/ui; REST + WebSocket; TanStack Query.
+- **Public exposure**: Cloudflare Tunnel:`example.org` +`cam.example.org`,
   no inbound ports on the Pi.
-- **Deployment** — GitHub `main` → 60 s poll → `pi-deploy.sh` → subsystem-aware
+- **Deployment**: GitHub`main` → 60 s poll →`pi-deploy.sh` → subsystem-aware
   rsync + systemd restart. No Docker, no cloud hosts.
 
 ---
@@ -144,15 +144,15 @@ ScheduleWindow  (id, cage_id, start_local, end_local, days_of_week, active)
 AuditLog        (id, user_id, action, target, ip, ts)
 ```
 
-A normalised schema with one append-only `Reading` table keeps ingestion fast and lets us add sensors without migrations.
+A normalised schema with one append-only`Reading` table keeps ingestion fast and lets us add sensors without migrations.
 
 ---
 
-## 7. AI design — two complementary models
+## 7. AI design, two complementary models
 
 The aggregator loop runs **two** AI models on every 30 s tick:
 
-### 7.1 Model 1 — Behaviour classifier (supervised, discriminative)
+### 7.1 Model 1, Behaviour classifier (supervised, discriminative)
 
 **Goal:** classify each window into one of
 `{sleeping, resting, active, exploring, eating, drinking, stereotyped}`.
@@ -161,7 +161,7 @@ The aggregator loop runs **two** AI models on every 30 s tick:
 time-of-day, weight delta, recent feeding-gate state.
 
 **Model:** gradient-boosted decision tree (scikit-learn
-`HistGradientBoostingClassifier`) — small, fast, interpretable; comparable
+`HistGradientBoostingClassifier`), small, fast, interpretable; comparable
 accuracy to small NNs on tabular behavioural data.
 
 **Training:** synthetic dataset (20 000 rows, seed = 42 → reproducible).
@@ -169,9 +169,9 @@ accuracy to small NNs on tabular behavioural data.
 split: **0.996** (HistGradientBoostingClassifier).
 
 > **Read that 0.996 with care.** Both the training and the test split come from
-> `ai/training/generate_dataset.py`, a rule-based generator that seeds its own
+>`ai/training/generate_dataset.py`, a rule-based generator that seeds its own
 > labels. The classifier is therefore recovering rules the generator wrote, and
-> the score measures how separable the generator made its classes — not accuracy
+> the score measures how separable the generator made its classes, not accuracy
 > on a real animal. The comparison table below is the evidence: two unrelated
 > model families tie at 0.996 and even logistic regression reaches 0.935, which
 > is what a saturated benchmark looks like. No labelled real-animal data was
@@ -183,43 +183,43 @@ split: **0.996** (HistGradientBoostingClassifier).
 
 | Model | Macro-F1 |
 |---|---:|
-| `random_forest` | 0.996 |
-| `hist_gradient_boosting` | 0.996 |
-| `logistic_regression` | 0.935 |
+|`random_forest` | 0.996 |
+|`hist_gradient_boosting` | 0.996 |
+|`logistic_regression` | 0.935 |
 
 HistGradientBoosting is the production choice: nearly tied with RandomForest
 on accuracy, smaller artefact, and faster inference.
 
-**Code:** `backend/app/ai/classifier.py` — falls back to a deterministic
+**Code:**`backend/app/ai/classifier.py`, falls back to a deterministic
 rule-based classifier if the model artefact is missing, so the platform
 remains useful on a fresh clone.
 
-### 7.2 Model 2 — Streaming anomaly detector (unsupervised, online)
+### 7.2 Model 2, Streaming anomaly detector (unsupervised, online)
 
 **Goal:** flag windows whose RER / movement / water-flow profile is
 statistically unusual *for that specific cage*, before they cross a hard
 rule threshold.
 
-**Why a second model?** The classifier always picks a label — even
+**Why a second model?** The classifier always picks a label, even
 unhealthy windows come back as e.g. "active" with low confidence. The
 anomaly detector asks the orthogonal question: *is this normal **for this
 animal**?* This catches early metabolic stress, dehydration onset and
 equipment drift that the classifier alone would miss.
 
 **Algorithm:** EWMA + **MAD** (Median Absolute Deviation) for robust
-per-cage z-scoring. Each `(cage, metric)` pair has its own sliding window
+per-cage z-scoring. Each`(cage, metric)` pair has its own sliding window
 of 240 samples (≈ 2 h of history). |z| ≥ 3 → *info*; |z| ≥ 4.5 → *warning*.
 
 **Why MAD instead of Isolation Forest / one-class SVM?**
 
-* No `scikit-learn` dependency to ship — runs natively on the Pi.
-* Streaming-friendly — no batch retraining cycle.
+* No`scikit-learn` dependency to ship, runs natively on the Pi.
+* Streaming-friendly, no batch retraining cycle.
 * Resistant to the very anomalies we're trying to catch (median, not mean).
 * Inspectable: a researcher can read the baseline from
-  `/api/v1/system/anomaly` and reason about every score.
+`/api/v1/system/anomaly` and reason about every score.
 
-**Code:** `backend/app/ai/anomaly.py`. Per-cage, per-metric state; alerts
-written to the existing `Alert` table with rule names like
+**Code:**`backend/app/ai/anomaly.py`. Per-cage, per-metric state; alerts
+written to the existing`Alert` table with rule names like
 `anomaly_rer` so they appear in the existing Alerts UI.
 
 ### 7.3 Future-proofing
@@ -235,29 +235,29 @@ change.
 | Concern | Mitigation |
 |---|---|
 | Sensor spoofing | Each device gets a per-device API token (rotatable). |
-| Replay attacks | Reading payload includes a monotonic `seq`; backend rejects duplicates per cage. |
+| Replay attacks | Reading payload includes a monotonic`seq`; backend rejects duplicates per cage. |
 | SQL injection | Parameterised queries only (SQLAlchemy ORM). |
-| XSS | React escapes by default; no `dangerouslySetInnerHTML`. |
-| CSRF | Cookie auth disabled; all auth via `Authorization: Bearer …`. |
+| XSS | React escapes by default; no`dangerouslySetInnerHTML`. |
+| CSRF | Cookie auth disabled; all auth via`Authorization: Bearer …`. |
 | Password storage | bcrypt with cost 12. |
 | Transport | HTTPS in production (terminated at reverse proxy). |
-| Audit | Every privileged action recorded in `AuditLog`. |
-| Secret management | All secrets via `.env`; never committed; `.env.example` lists keys without values. |
+| Audit | Every privileged action recorded in`AuditLog`. |
+| Secret management | All secrets via`.env`; never committed;`.env.example` lists keys without values. |
 
 ---
 
 ## 9. Testing strategy
 
-- **Backend:** pytest, ≥ 70% line coverage on `app/services/*` (the business-logic layer).
+- **Backend:** pytest, ≥ 70% line coverage on`app/services/*` (the business-logic layer).
 - **Frontend:** Vitest + React Testing Library for components; Playwright smoke test for the happy path.
-- **Integration:** `scripts/dev-up.sh` brings up backend + frontend + simulator;
+- **Integration:**`scripts/dev-up.sh` brings up backend + frontend + simulator;
   the test suite posts sensor packets and asserts the dashboard reflects them.
 - **AI (classifier):** held-out test set; macro-F1 ≥ 0.85 enforced in CI.
-- **AI (anomaly detector):** synthetic anomaly injection — the test suite
+- **AI (anomaly detector):** synthetic anomaly injection, the test suite
   injects an out-of-baseline RER and asserts that the detector raises an
-  `anomaly_rer` alert within one tick after warm-up.
+`anomaly_rer` alert within one tick after warm-up.
 - **Manual:** UX walk-through against the personas before each demo.
-- **Production smoke test:** `/health` + `/api/v1/system/status` are
+- **Production smoke test:**`/health` +`/api/v1/system/status` are
   monitored every minute by the deploy timer's status check.
 
 ---
@@ -266,7 +266,7 @@ change.
 
 The Industry Project module is a 1-semester prototype. Roll-out is staged:
 
-1. **Sprint 1–2:** simulator + backend skeleton, schema, auth.
+1. **Sprint 1 to 2:** simulator + backend skeleton, schema, auth.
 2. **Sprint 3:** dashboard MVP (overview + cage detail).
 3. **Sprint 4:** ML behaviour classifier wired in.
 4. **Sprint 5:** alerts, scheduling, reports.

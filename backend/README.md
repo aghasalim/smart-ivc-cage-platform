@@ -1,4 +1,4 @@
-# Backend — FastAPI + SQLite + JWT + WebSocket
+# Backend, FastAPI + SQLite + JWT + WebSocket
 
 The data hub of the IVC platform. Receives sensor packets from cage controllers, persists them, runs ML behaviour classification, fans out updates over WebSocket, and serves a REST API to the dashboard.
 

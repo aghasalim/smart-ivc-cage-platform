@@ -1,6 +1,6 @@
 ## Summary
 
-<!-- 1–3 bullet points -->
+<!-- 1 to 3 bullet points -->
 
 ## Test plan
 
