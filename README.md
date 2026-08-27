@@ -171,6 +171,15 @@ cd backend && pip install -r requirements.txt pytest && pytest
 Commit counts from the original repository, which is the fairest evidence available: | contributor | commits | principal area | |---|---:|---| | **Aghasalim Mustafazada** (this account) | 173 | backend, dashboard, device/firmware, deployment, docs | | **Gražvydas Stalmokas** | 29 | behaviour-classification models, multi-animal tracking | | **Hadi Hleihel** | 2 |, | Concretely: I wrote the FastAPI backend and its tests, the React dashboard, the Arduino firmware and the Pi-side device services, the camera service, the Cloudflare Tunnel and pull-only deploy pipeline, and the documentation.
 
 Full detail in [notes/METHODS.md](notes/METHODS.md#attribution).
+## References
+
+This is a platform rather than a method, so the list is short and the entries
+are standards and tools the implementation follows, not results it reproduces.
+
+- **Directive 2010/63/EU on the protection of animals used for scientific purposes.** [eur-lex.europa.eu/eli/dir/2010/63/oj](https://eur-lex.europa.eu/eli/dir/2010/63/oj) The regime any live-animal use would fall under. This project never ran on live animals and never obtained ethical approval, which is stated in the scope section and is the reason the behaviour accuracy here is unmeasured.
+- **Leys, Ley, Klein, Bernard, Licata. Detecting outliers: Do not use standard deviation around the mean, use absolute deviation around the median. Journal of Experimental Social Psychology 49, 2013.** [doi:10.1016/j.jesp.2013.03.013](https://doi.org/10.1016/j.jesp.2013.03.013) The median absolute deviation rule used by the anomaly detector.
+- **Component datasheets: HX711 load cell amplifier, DHT11 temperature and humidity sensor, MH-Z19C NDIR CO2 sensor, JXW-02 electrochemical O2 sensor.** The calibration constants and the sampling limits in the firmware come from these.
+
 ## Licence
 
 MIT, see [LICENSE](LICENSE). Client identity, meeting minutes, peer evaluations,
