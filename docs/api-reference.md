@@ -2,9 +2,9 @@
 
 | Environment | Base URL |
 |---|---|
-| **Production** | `https://example.org` |
-| Camera streams | `https://cam.example.org` |
-| Development | `http://localhost:8000` |
+| **Production** |`https://example.org` |
+| Camera streams |`https://cam.example.org` |
+| Development |`http://localhost:8000` |
 
 All times are ISO-8601 UTC. All request and response bodies are JSON unless
 otherwise noted. The interactive OpenAPI/Swagger UI is at
@@ -14,7 +14,7 @@ otherwise noted. The interactive OpenAPI/Swagger UI is at
 
 ## Authentication
 
-The API uses **JWT bearer tokens**. Obtain one via `POST /api/v1/auth/login`,
+The API uses **JWT bearer tokens**. Obtain one via`POST /api/v1/auth/login`,
 then send it on subsequent calls:
 
 ```
@@ -27,13 +27,13 @@ JWT lifetime is 12 hours. Tokens can be refreshed via
 mitigate timing attacks.
 
 The same JWT also authenticates the **WebSocket** connection (passed as
-the `token` query parameter — see § WebSocket below).
+the`token` query parameter, see § WebSocket below).
 
 ---
 
 ## Health & meta
 
-### `GET /health`
+###`GET /health`
 
 Liveness probe. No auth required.
 
@@ -41,7 +41,7 @@ Liveness probe. No auth required.
 { "status": "ok", "version": "1.0.0" }
 ```
 
-### `GET /api/v1/meta`
+###`GET /api/v1/meta`
 
 Returns build metadata and the public configuration. No auth required.
 
@@ -57,7 +57,7 @@ Returns build metadata and the public configuration. No auth required.
 
 ## Authentication endpoints
 
-### `POST /api/v1/auth/login`
+###`POST /api/v1/auth/login`
 
 ```json
 // request
@@ -71,12 +71,12 @@ Returns build metadata and the public configuration. No auth required.
 }
 ```
 
-### `POST /api/v1/auth/refresh`
+###`POST /api/v1/auth/refresh`
 
 Refreshes a valid token (issues a new one with a fresh expiry).
-Requires a valid `Authorization: Bearer …` header.
+Requires a valid`Authorization: Bearer …` header.
 
-### `GET /api/v1/auth/me`
+###`GET /api/v1/auth/me`
 
 Returns the current user.
 
@@ -88,7 +88,7 @@ Returns the current user.
 
 ## Cages
 
-### `GET /api/v1/cages`
+###`GET /api/v1/cages`
 
 Lists every cage visible to the caller.
 
@@ -106,19 +106,19 @@ Lists every cage visible to the caller.
 ]
 ```
 
-### `POST /api/v1/cages` *(admin)*
+###`POST /api/v1/cages` *(admin)*
 
 Creates a new cage.
 
-### `GET /api/v1/cages/{cage_id}`
+###`GET /api/v1/cages/{cage_id}`
 
 Detailed view, including current sensor snapshot.
 
-### `PATCH /api/v1/cages/{cage_id}`
+###`PATCH /api/v1/cages/{cage_id}`
 
 Updates metadata (name, location, strain, age).
 
-### `DELETE /api/v1/cages/{cage_id}` *(admin)*
+###`DELETE /api/v1/cages/{cage_id}` *(admin)*
 
 Removes a cage. Readings are kept and orphaned-flagged.
 
@@ -126,10 +126,10 @@ Removes a cage. Readings are kept and orphaned-flagged.
 
 ## Ingest (device only)
 
-### `POST /api/v1/ingest`
+###`POST /api/v1/ingest`
 
 The only endpoint a cage controller talks to. One packet per 5 s.
-Every sensor key is **optional** — a packet may carry just the
+Every sensor key is **optional**: a packet may carry just the
 `environment` reading (as the env-ingester does) or a subset of sensors.
 
 ```json
@@ -158,7 +158,7 @@ Rejected if:
 |---|---|
 | 401 | Bad or missing token |
 | 404 | Cage unknown |
-| 409 | Duplicate `seq` for the same `(cage, sensor)` |
+| 409 | Duplicate`seq` for the same`(cage, sensor)` |
 | 422 | Schema violation |
 
 Replay protection: the database has a unique constraint on
@@ -169,16 +169,16 @@ of double-counting.
 
 ## Readings
 
-### `GET /api/v1/cages/{cage_id}/readings`
+###`GET /api/v1/cages/{cage_id}/readings`
 
 Query parameters:
 
 | Parameter | Type | Description |
 |---|---|---|
-| `sensor` | `feeding \| water \| metabolic \| behaviour \| weighing \| environment` | Filter to one sensor |
-| `from` | ISO-8601 | Inclusive lower bound |
-| `to` | ISO-8601 | Inclusive upper bound |
-| `limit` | int (≤ 5000) | Max rows returned |
+|`sensor` |`feeding \| water \| metabolic \| behaviour \| weighing \| environment` | Filter to one sensor |
+|`from` | ISO-8601 | Inclusive lower bound |
+|`to` | ISO-8601 | Inclusive upper bound |
+|`limit` | int (≤ 5000) | Max rows returned |
 
 ```json
 [
@@ -187,9 +187,9 @@ Query parameters:
 ]
 ```
 
-### `GET /api/v1/cages/{cage_id}/summary`
+###`GET /api/v1/cages/{cage_id}/summary`
 
-Daily summary for the last `N` days.
+Daily summary for the last`N` days.
 
 ```json
 {
@@ -206,19 +206,19 @@ Daily summary for the last `N` days.
 }
 ```
 
-### `GET /api/v1/cages/{cage_id}/export.csv`
+###`GET /api/v1/cages/{cage_id}/export.csv`
 
 CSV export over a date range. One row per reading. Returned with
-`Content-Type: text/csv` and a `Content-Disposition: attachment` header so
+`Content-Type: text/csv` and a`Content-Disposition: attachment` header so
 browsers download it directly.
 
 ---
 
 ## Alerts
 
-### `GET /api/v1/alerts`
+###`GET /api/v1/alerts`
 
-Query: `?acknowledged=<true|false>&limit=<n>`
+Query:`?acknowledged=<true|false>&limit=<n>`
 
 ```json
 [
@@ -234,26 +234,26 @@ Query: `?acknowledged=<true|false>&limit=<n>`
 ]
 ```
 
-Possible `rule` values:
+Possible`rule` values:
 
 | Rule | Source | Severity |
 |---|---|---|
-| `rer_out_of_range` | Threshold rule | warning |
-| `intake_low_24h` | Threshold rule | warning |
-| `no_activity` | Threshold rule | critical |
-| `anomaly_rer` | AI model 2 (anomaly detector) | info / warning |
-| `anomaly_movement_cm` | AI model 2 | info / warning |
-| `anomaly_water_flow_ml` | AI model 2 | info / warning |
+|`rer_out_of_range` | Threshold rule | warning |
+|`intake_low_24h` | Threshold rule | warning |
+|`no_activity` | Threshold rule | critical |
+|`anomaly_rer` | AI model 2 (anomaly detector) | info / warning |
+|`anomaly_movement_cm` | AI model 2 | info / warning |
+|`anomaly_water_flow_ml` | AI model 2 | info / warning |
 
-### `POST /api/v1/alerts/{id}/ack`
+###`POST /api/v1/alerts/{id}/ack`
 
-Acknowledges an alert (sets `acknowledged_at = now`).
+Acknowledges an alert (sets`acknowledged_at = now`).
 
 ---
 
 ## Schedule
 
-### `GET /api/v1/cages/{cage_id}/schedule`
+###`GET /api/v1/cages/{cage_id}/schedule`
 
 ```json
 {
@@ -264,7 +264,7 @@ Acknowledges an alert (sets `acknowledged_at = now`).
 }
 ```
 
-### `PUT /api/v1/cages/{cage_id}/schedule`
+###`PUT /api/v1/cages/{cage_id}/schedule`
 
 Replaces the schedule for a cage.
 
@@ -272,9 +272,9 @@ Replaces the schedule for a cage.
 
 ## System / operations
 
-These endpoints back the dashboard's `/system` page. All require auth.
+These endpoints back the dashboard's`/system` page. All require auth.
 
-### `GET /api/v1/system/status`
+###`GET /api/v1/system/status`
 
 Single-call snapshot of the runtime: versions, services, network
 endpoints, deploy pipeline, AI models, and security posture.
@@ -295,11 +295,11 @@ endpoints, deploy pipeline, AI models, and security posture.
 }
 ```
 
-### `GET /api/v1/system/logs`
+###`GET /api/v1/system/logs`
 
-Query: `?lines=<1..500>` (default 80)
+Query:`?lines=<1..500>` (default 80)
 
-Returns the last `lines` entries of `~/pi-deploy.log`, parsed into
+Returns the last`lines` entries of`~/pi-deploy.log`, parsed into
 `{ ts, msg }` objects.
 
 ```json
@@ -313,9 +313,9 @@ Returns the last `lines` entries of `~/pi-deploy.log`, parsed into
 }
 ```
 
-### `GET /api/v1/system/deploys`
+###`GET /api/v1/system/deploys`
 
-Query: `?limit=<1..50>` (default 10)
+Query:`?limit=<1..50>` (default 10)
 
 Returns recent successful deploys parsed from the deploy log.
 
@@ -329,7 +329,7 @@ Returns recent successful deploys parsed from the deploy log.
 }
 ```
 
-### `GET /api/v1/system/anomaly`
+###`GET /api/v1/system/anomaly`
 
 Inspect the AnomalyDetector's per-cage baselines (useful for debugging).
 
@@ -354,9 +354,9 @@ Inspect the AnomalyDetector's per-cage baselines (useful for debugging).
 
 ---
 
-## WebSocket — real-time stream
+## WebSocket, real-time stream
 
-### `wss://example.org/ws?token=<jwt>`
+###`wss://example.org/ws?token=<jwt>`
 
 After connecting, the server emits one JSON message per new event:
 
@@ -386,14 +386,14 @@ Every error returns the same shape:
 
 | HTTP | Code | Meaning |
 |---|---|---|
-| 400 | `BAD_REQUEST` | Generic client error |
-| 401 | `INVALID_CREDENTIALS` / `INVALID_TOKEN` | Auth failure |
-| 403 | `FORBIDDEN` | Authenticated but lacking permission |
-| 404 | `NOT_FOUND` | Cage / alert / resource missing |
-| 409 | `CONFLICT` | Duplicate `seq` on ingest |
-| 422 | `VALIDATION_FAILED` | Body didn't match schema |
-| 429 | `RATE_LIMITED` | Rate limiter triggered (e.g. login bursts) |
-| 500 | `INTERNAL` | Unhandled server error (logged with traceback) |
+| 400 |`BAD_REQUEST` | Generic client error |
+| 401 |`INVALID_CREDENTIALS` /`INVALID_TOKEN` | Auth failure |
+| 403 |`FORBIDDEN` | Authenticated but lacking permission |
+| 404 |`NOT_FOUND` | Cage / alert / resource missing |
+| 409 |`CONFLICT` | Duplicate`seq` on ingest |
+| 422 |`VALIDATION_FAILED` | Body didn't match schema |
+| 429 |`RATE_LIMITED` | Rate limiter triggered (e.g. login bursts) |
+| 500 |`INTERNAL` | Unhandled server error (logged with traceback) |
 
-Validation errors **never** echo the request body — the field set is
+Validation errors **never** echo the request body, the field set is
 returned generically to avoid leaking credentials or PII.

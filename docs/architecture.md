@@ -1,6 +1,6 @@
 # Architecture
 
-> **Companion doc:** [`HARDWARE.md`](HARDWARE.md) — full hardware
+> **Companion doc:** [`HARDWARE.md`](HARDWARE.md): full hardware
 > technical analysis (BOM, wiring, protocols, failure modes).
 > This document focuses on the *software* architecture.
 
@@ -57,14 +57,14 @@
 
 | Process | Purpose | Listening on | Restart policy |
 |---|---|---|---|
-| `cloudflared` | Outbound tunnel for example.org + cam.example.org | — (outbound only) | system service, `Restart=on-failure` |
-| `ivc-backend` | FastAPI app — REST + WebSocket + AI + rules | `127.0.0.1:8000` | systemd user, on-failure |
-| `ivc-cameras` | V4L2 → MJPEG bridge, servo proxy, DHT11 proxy | `127.0.0.1:8090` | systemd user, on-failure |
-| `ivc-env-ingester` | Polls camera service, posts DHT11 → backend | — (HTTP client) | systemd user, on-failure |
-| `pi-deploy.timer` | 60 s GitHub poll → `pi-deploy.sh` | — | systemd user timer, `Persistent=true` |
+|`cloudflared` | Outbound tunnel for example.org + cam.example.org |, (outbound only) | system service,`Restart=on-failure` |
+|`ivc-backend` | FastAPI app, REST + WebSocket + AI + rules |`127.0.0.1:8000` | systemd user, on-failure |
+|`ivc-cameras` | V4L2 → MJPEG bridge, servo proxy, DHT11 proxy |`127.0.0.1:8090` | systemd user, on-failure |
+|`ivc-env-ingester` | Polls camera service, posts DHT11 → backend |, (HTTP client) | systemd user, on-failure |
+|`pi-deploy.timer` | 60 s GitHub poll →`pi-deploy.sh` |, | systemd user timer,`Persistent=true` |
 
 All five share **structured JSON logging** to journald + (for the deploy
-job) `~/pi-deploy.log` which is tailed by the dashboard's `/system`
+job)`~/pi-deploy.log` which is tailed by the dashboard's`/system`
 page.
 
 ## 3. Module map (backend/)
@@ -129,11 +129,11 @@ Authorization: Bearer <jwt>
 }
 ```
 
-1. **Validation** — Pydantic v2 schemas, each sensor is optional.
-2. **Dedup** — `UniqueConstraint(cage_id, sensor, seq)` rejects replays.
-3. **Persistence** — one append-only row per sensor in the `readings` table.
-4. **Rules** — `evaluate_rules(...)` checks thresholds inline, creates alerts.
-5. **Broadcast** — every new reading + alert is pushed to WebSocket subscribers.
+1. **Validation**: Pydantic v2 schemas, each sensor is optional.
+2. **Dedup**:`UniqueConstraint(cage_id, sensor, seq)` rejects replays.
+3. **Persistence**: one append-only row per sensor in the`readings` table.
+4. **Rules**:`evaluate_rules(...)` checks thresholds inline, creates alerts.
+5. **Broadcast**: every new reading + alert is pushed to WebSocket subscribers.
 
 ### 4.2 AI pipeline (aggregator-side)
 
@@ -159,9 +159,9 @@ Authorization: Bearer <jwt>
 
 Two models, two different jobs:
 
-* **BehaviourClassifier** is *discriminative* — it always picks one of
+* **BehaviourClassifier** is *discriminative*, it always picks one of
   the seven behaviour labels for every window.
-* **AnomalyDetector** is *generative-ish, online, unsupervised* — it learns
+* **AnomalyDetector** is *generative-ish, online, unsupervised*, it learns
   each cage's baseline for RER / movement / water_flow and flags windows
   whose robust z-score exceeds 3 σ (info) or 4.5 σ (warning). MAD-based,
   so anomalies don't poison their own baseline.
@@ -183,7 +183,7 @@ Two models, two different jobs:
   └─────────────────────────────────────────────┘
 ```
 
-### 5.2 Production — single-cage prototype (current)
+### 5.2 Production, single-cage prototype (current)
 
 ```
   ┌──────────────────────────────────────────────────────────────┐
@@ -205,7 +205,7 @@ Two models, two different jobs:
   └──────────────────────────────────────────────────────────────┘
 ```
 
-### 5.3 Production — multi-cage future state
+### 5.3 Production, multi-cage future state
 
 ```
                           Cloudflare
@@ -220,54 +220,54 @@ Two models, two different jobs:
 ```
 
 Because each Pi is fully self-contained (SQLite, WS, dashboard, AI), a
-multi-cage rollout is purely additive — no central infrastructure required.
+multi-cage rollout is purely additive, no central infrastructure required.
 
 ## 6. Configuration & secrets
 
 * All configuration is environment-variable driven (Pydantic Settings).
-* Public URLs live in `frontend/.env.production` (committed — not secret).
-* Real secrets (JWT signing key, DB passwords if any) live in `.env`,
-  which is `.gitignore`d and provisioned on the Pi out-of-band.
+* Public URLs live in`frontend/.env.production` (committed, not secret).
+* Real secrets (JWT signing key, DB passwords if any) live in`.env`,
+  which is`.gitignore`d and provisioned on the Pi out-of-band.
 * The backend **refuses to boot** in production with the default dev JWT secret.
 
 ## 7. Observability
 
 | Surface | Where |
 |---|---|
-| Structured JSON logs | `journalctl --user -u ivc-backend` |
-| Deploy history | `~/pi-deploy.log` (tailed live at `/system` page) |
-| Liveness | `GET /health` |
-| Build metadata | `GET /api/v1/meta` |
-| Full system snapshot | `GET /api/v1/system/status` (requires auth) |
-| AI baselines | `GET /api/v1/system/anomaly` (requires auth) |
+| Structured JSON logs |`journalctl --user -u ivc-backend` |
+| Deploy history |`~/pi-deploy.log` (tailed live at`/system` page) |
+| Liveness |`GET /health` |
+| Build metadata |`GET /api/v1/meta` |
+| Full system snapshot |`GET /api/v1/system/status` (requires auth) |
+| AI baselines |`GET /api/v1/system/anomaly` (requires auth) |
 
-The `/system` page in the dashboard surfaces all of these without SSH.
+The`/system` page in the dashboard surfaces all of these without SSH.
 
 ## 8. Backups & data safety
 
-* **SQLite WAL mode** with `checkpoint_wal()` on boot — clears stale locks
+* **SQLite WAL mode** with`checkpoint_wal()` on boot, clears stale locks
   left by a crash.
-* **Daily snapshot** via `sqlite3 .backup` (cron on the Pi); kept 14 days.
-* **Repo backup**: all code on GitHub; the Pi can be rebuilt from `git clone`
+* **Daily snapshot** via`sqlite3 .backup` (cron on the Pi); kept 14 days.
+* **Repo backup**: all code on GitHub; the Pi can be rebuilt from`git clone`
   + the one-shot bootstrap in [`HARDWARE.md`](HARDWARE.md) §11.
 
 ## 9. Upgrade strategy
 
-* **Code**: `git push origin main` — `pi-deploy.timer` fires within 60 s.
-  `pi-deploy.sh` rsyncs only the changed subsystem and restarts only those
+* **Code**:`git push origin main``pi-deploy.timer` fires within 60 s.
+`pi-deploy.sh` rsyncs only the changed subsystem and restarts only those
   services. Failed deploys never down the running services.
-* **Database**: SQLAlchemy `create_all()` is additive; for schema changes
+* **Database**: SQLAlchemy`create_all()` is additive; for schema changes
   beyond add-column we'd switch to Alembic (planned for multi-cage).
-* **Firmware (Arduino)**: separate process — `avrdude` over USB from the
-  Pi. Documented in `device/arduino/` and [`HARDWARE.md`](HARDWARE.md) §11.
+* **Firmware (Arduino)**: separate process`avrdude` over USB from the
+  Pi. Documented in`device/arduino/` and [`HARDWARE.md`](HARDWARE.md) §11.
 
 ## 10. Why these choices (rationale)
 
 | Decision | Rationale |
 |---|---|
-| **SQLite WAL over Postgres** | One process, no network, perfect for an edge device; readings table handles 10⁵+ rows/day with indexed `(cage_id, sensor, ts)` |
-| **systemd user services over Docker** | Sub-second boot, native journal access, no daemon-in-daemon overhead on the Pi; trivial to inspect with `systemctl --user status` |
+| **SQLite WAL over Postgres** | One process, no network, perfect for an edge device; readings table handles 10⁵+ rows/day with indexed`(cage_id, sensor, ts)` |
+| **systemd user services over Docker** | Sub-second boot, native journal access, no daemon-in-daemon overhead on the Pi; trivial to inspect with`systemctl --user status` |
 | **Cloudflare Tunnel over port-forwarding** | No inbound ports open on the lab/home LAN; survives ISP IP changes; no router config |
 | **Pull-based auto-deploy over push** | Pi never exposes a webhook endpoint; tolerates ISP outages (catches up on next tick) |
-| **Two AI models** | Classifier always picks a label (even bad ones); anomaly detector flags windows that don't fit any baseline — together they catch both expected drift and unexpected health events |
-| **JSON line protocol on Arduino** | Debuggable with `cat /dev/ttyACM0`, future-proof to add new commands without changing the parser |
+| **Two AI models** | Classifier always picks a label (even bad ones); anomaly detector flags windows that don't fit any baseline, together they catch both expected drift and unexpected health events |
+| **JSON line protocol on Arduino** | Debuggable with`cat /dev/ttyACM0`, future-proof to add new commands without changing the parser |

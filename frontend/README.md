@@ -1,4 +1,4 @@
-# Frontend — React 18 + Vite + Tailwind + shadcn/ui
+# Frontend, React 18 + Vite + Tailwind + shadcn/ui
 
 The researcher-facing dashboard. Real-time charts, behaviour heat-map,
 schedule editor, alert centre, daily summaries.
@@ -11,7 +11,7 @@ npm run dev
 ```
 
 Then open http://localhost:5173. The dev server proxies API calls to
-`VITE_API_URL` (default `http://localhost:8000`).
+`VITE_API_URL` (default`http://localhost:8000`).
 
 ## Tech
 
