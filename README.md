@@ -23,7 +23,10 @@ for an external client in animal-research instrumentation.
 
 The original report leads with **macro-F1 0.996** for the behaviour classifier.
 That number is real, reproducible, and close to meaningless, and it is worth
-explaining why, because it is the most instructive thing in the project.
+explaining why, because it is the most instructive thing in the project. It and
+every other measured figure below are recomputed from the raw metrics by
+independent implementations in `verify/`, and CI fails the build if any of them
+disagree.
 
 The classifier is trained and tested on a **synthetic dataset** produced by
 `ai/training/generate_dataset.py`, a hand-written generator that seeds labels
