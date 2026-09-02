@@ -48,6 +48,7 @@ check_go () { ( cd verify/gocheck && go run . -root "$root" ); }
 check_py () { python3 verify/report.py "$root"; }
 check_r  () { Rscript verify/report.R "$root"; }
 check_rb () { ruby verify/report.rb "$root"; }
+check_js () { node verify/report.mjs "$root"; }
 
 run "C, confusion matrix to metrics"         cc      check_c
 run "SQL, confusion matrix to metrics"        sqlite3 check_report_sql
@@ -56,6 +57,7 @@ run "Go, confusion matrix to metrics"         go      check_go
 run "Python, confusion matrix to metrics"     python3 check_py
 run "R, confusion matrix to metrics"          Rscript check_r
 run "Ruby, confusion matrix to metrics"       ruby    check_rb
+run "JavaScript, confusion matrix to metrics" node    check_js
 
 printf '\n%s\n' "----------------------------------------"
 printf '%d passed, %d failed, %d skipped\n' "$pass" "$fail" "$skip"
