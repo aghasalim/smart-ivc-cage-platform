@@ -11,9 +11,11 @@ root <- if (length(args) > 0) args[1] else "."
 lines <- readLines(file.path(root, "ai", "reports", "metrics.json"), warn = FALSE)
 json_text <- paste(lines, collapse = " ")
 
-# Extract test_macro_f1
+# Extract test_macro_f1. A capture group rather than a lookbehind: PCRE only
+# allows fixed length lookbehind, and \s{0,5} is not, so the lookbehind form
+# compiles on macOS and is rejected by the PCRE on the CI runner.
 pub_f1 <- as.numeric(regmatches(json_text,
-  regexpr('(?<="test_macro_f1"\\s{0,5}:\\s{0,5})[0-9.eE+-]+', json_text, perl = TRUE)))
+  regexec('"test_macro_f1"[[:space:]]*:[[:space:]]*([0-9.eE+-]+)', json_text))[[1]][2])
 
 # Count classes by finding the classes array
 cls_start <- regexpr('"classes"', json_text)
