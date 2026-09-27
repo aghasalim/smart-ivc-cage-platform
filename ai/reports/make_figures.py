@@ -170,8 +170,8 @@ def behaviour_timeline(out: Path) -> Path:
     """A real session, as the dashboard sees it.
 
     Dominant behaviour state per window alongside movement and thigmotaxis --
-    wall-hugging, a standard anxiety proxy in rodent work. This is camera output
-    from the actual rig, not the synthetic generator.
+    wall-hugging, a standard anxiety proxy in rodent work. This is real infrared
+    footage (supplied for the project), not the synthetic generator.
     """
     table = pd.read_csv(
         ROOT / "ai" / "data" / "behavioral_monitoring" / "outputs"

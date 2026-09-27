@@ -221,7 +221,7 @@
     },
     "pump": {
       "title": "水泵",
-      "closedLoop": "闭环控制",
+      "closedLoop": "定时给水",
       "volumeMl": "容量 (mL)",
       "dispense": "分配",
       "dispensing": "分配中…",
@@ -411,7 +411,7 @@
     "unreachableTitle": "无法连接树莓派视频流",
     "unreachableDesc": "无法连接 {{url}} 的视频流服务。摄像头需要仪表盘与树莓派在同一局域网上运行。",
     "troubleshoot": {
-      "1": "验证树莓派已通过以太网连接，IP 地址为 raspberrypi.local",
+      "1": "验证树莓派已联网，且可通过 VITE_PI_STREAM_URL 访问",
       "2": "在树莓派上：sudo systemctl status ivc-cameras",
       "3": "从 Mac 上：curl http://raspberrypi.local:8090/health"
     },

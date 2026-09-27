@@ -1467,7 +1467,7 @@ def pump_set():
     Dosing is OPEN-LOOP (time-based): the flow sensor is too noisy and the water
     load cell doesn't track the dose, so {"dose":mL} runs the pump for mL / rate
     seconds rather than metering by sensor. Accuracy depends on the rate
-    (DOSE_RATE_ML_S, default 0.5 mL/s; override per-request with "rate").
+    (DOSE_RATE_ML_S, default 4.5 mL/s as calibrated; override per-request with "rate").
 
     Body (one of):
         {"dose": 15}                 → run the pump ~15 mL worth of time

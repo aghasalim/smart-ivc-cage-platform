@@ -221,7 +221,7 @@
     },
     "pump": {
       "title": "Pompe à eau",
-      "closedLoop": "Boucle fermée",
+      "closedLoop": "Dose minutée",
       "volumeMl": "Volume (mL)",
       "dispense": "Distribuer",
       "dispensing": "Distribution…",
@@ -411,7 +411,7 @@
     "unreachableTitle": "Streamer Pi inaccessible",
     "unreachableDesc": "Impossible d'atteindre le service de diffusion à l'adresse {{url}}. Les caméras nécessitent que le tableau de bord s'exécute sur la même machine que le câble LAN du Pi.",
     "troubleshoot": {
-      "1": "Vérifiez que le Pi est connecté via Ethernet et possède l'adresse raspberrypi.local",
+      "1": "Vérifiez que le Pi est sur le réseau et joignable à l'adresse VITE_PI_STREAM_URL",
       "2": "Sur le Pi : sudo systemctl status ivc-cameras",
       "3": "Depuis le Mac : curl http://raspberrypi.local:8090/health"
     },

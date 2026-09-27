@@ -70,14 +70,14 @@ from this document alone.
 | Arduino Mega 2560 | 1 | Real-time GPIO bridge, load cells, flow, servo, relays, DHT11, CO2 | Chosen over Uno for the 54-pin headroom (3× HX711 + DHT11 + flow + 2 relays + servo + 2 hardware UARTs already in use); chosen over ESP32 because we want USB-serial reliability, not Wi-Fi |
 | DHT11 (T/RH sensor) | 1 | Cage environment baseline | Single-wire protocol on **D3**, sampling cap 1 Hz, 2 s cache in firmware to avoid bus contention |
 | HX711 + load cell | 3 | FOOD / WATER / MOUSE mass | 24-bit ADC, bit-banged DT/SCK pairs (D4/D5, D6/D7, D8/D9); per-cell scale + offset stored in EEPROM (magic`0x49564341`) |
-| YF-S401 water flow sensor | 1 | Closed-loop volume dosing | Hall-effect pulse output on **D2** (interrupt,`INPUT_PULLUP`, RISING); ~5880 pulses/L |
+| YF-S401 water flow sensor | 1 | Volume feedback for dosing (firmware closed loop; unused in practice, see §3.2) | Hall-effect pulse output on **D2** (interrupt,`INPUT_PULLUP`, RISING); firmware default 7.5 pulses/mL, overwritten by the`{"flowcal"}` calibration stored in EEPROM |
 | Water pump + relay | 1 | Push dosed water | Relay drive on **D12**, **active-LOW** (LOW = pump on) |
 | Solenoid water valve + relay | 1 | Open/seal water line, kill siphon | Relay drive on **D13**, **active-LOW** (LOW = open / HIGH = closed); auto-closes when pump stops |
 | Food dispenser servo (SG90) | 1 | Food gate | 4.8 to 6 V, PWM on **D11**. A second servo channel is`attach()`ed on **D10** in firmware but no servo is physically wired (phantom water-servo slot) |
 | MH-Z19C CO2 sensor | 1 | CO2 (intended on Pi GPIO UART) | Firmware reserves **D14/D15** (Serial3 @ 9600); intended target is the Pi's`/dev/serial0`. Not yet wired/working |
 | JXW-02 O2 sensor | 1 | O2 % (~20.9 % in air) | **Not on the Mega**: USB CH340 adapter on the Pi (auto-detected by VID`0x1A86`) |
 | USB UVC webcams | 1, N | Behaviour streams | YUYV / MJPEG fallback; ffmpeg per-camera reader |
-| 5 V/3 A PSU | 1 | Pi + servo + relays + pump | Servo/pump draw current peaks; PSU has 30 % headroom |
+| Power | 1 each | Pi, and the 12 V pump/valve rail | 27 W USB-C PSU for the Pi; separate 12 V ≥ 2 A supply for pump and solenoid (see`BILL_OF_MATERIALS.md`) |
 | LAN cable + Howest-IoT Wi-Fi |, | Redundant network paths | Pi has both wired + wireless; either alone is sufficient |
 | Cloudflare account (free tier) |, | Public exposure | Replaces port-forwarding; no inbound ports on home/lab network |
 
@@ -125,13 +125,13 @@ there is **no GPIO conflict**: no two active devices share a pin.
 
 ### 3.2 Water system (pump + valve + flow)
 
-The water subsystem performs **closed-loop, exact-volume dosing**:
+The firmware implements **closed-loop, exact-volume dosing**. **As deployed it was not used:** the flow sensor picked up ~200 phantom pulses/s of electrical noise, so the dashboard doses open-loop by time at a scale-calibrated 4.5 mL/s (`device/camera-stream/server.py`). The firmware loop:
 
 - **Pump relay (D12)** and **solenoid valve relay (D13)** are both **active-LOW**.
 - **`doseVolume(targetML)`** opens the valve, runs the pump, and counts YF-S401
   pulses (D2) to integrate dispensed millilitres. The relay is cut **early**
   (`targetML − DOSE_COAST_ML`) so coasting/residual flow lands on the exact target.
-- A **safety timeout** (scaled to the target, clamped 10 to 120 s) prevents a runaway pump.
+- A **safety timeout** (target × 4 s, clamped 20 to 300 s) prevents a runaway pump.
 - **Siphon prevention:** when the pump stops (`pumpOff()`), the relay cuts the pump
   first, then`valveClose()` physically seals the line. The firmware then watches up
   to 10 s for residual ("siphon") flow and reports a`flow_reset` event.
@@ -143,7 +143,7 @@ The water subsystem performs **closed-loop, exact-volume dosing**:
 Three HX711 24-bit load-cell amplifiers share no pins (DT/SCK pairs on
 D4/D5, D6/D7, D8/D9) and map to **FOOD**, **WATER**, and **MOUSE**. Calibration
 (scale factor + tare offset per cell) is held in EEPROM behind magic word
-`0x49564341`;`c` calibrates and`t` tares over USB serial.
+`0x49564341`; the`{"calibrate"}` and`{"tare"}` JSON commands set it over USB serial.
 
 ### 3.4 CO2, MH-Z19C
 
@@ -194,7 +194,7 @@ DHT11   _____________     ____         ____    ____
 ```
 
 Checksum =`(byte0 + byte1 + byte2 + byte3) & 0xFF`. We re-read when the
-checksum fails, capping at 3 retries; on permanent failure the firmware
+checksum fails, the read is retried on the next call; until one succeeds the firmware
 returns the last good cached value with an`env_age` field so the consumer
 can drop stale data.
 
@@ -205,13 +205,14 @@ firmware debuggable from the Pi with nothing but`cat /dev/ttyACM0`.
 
 Command lines from the Pi (each newline-terminated, parsed on the leading`{`):
 ```json
-{"dose":100}                 // dispense exactly 100 mL via flow-sensor feedback (1–1000 mL)
+{"dose":100}                 // firmware closed-loop dose, 100 mL via flow-sensor feedback (1–1000 mL); the dashboard uses timed pump runs instead
 {"pump":"on","dur":5000}     // run pump for a fixed time (ms, clamped 100–30000)
 {"pump":"off"}               // stop pump + close valve (siphon kill)
 {"servo":"food","angle":90}  // food servo 0–180°
 ```
-Single-character serial keys also work:`c` = calibrate load cells,
-`t` = tare,`z` = CO2 zero.
+Single-character commands were removed on purpose: a stray byte from feed-servo
+electrical noise could read as`p` and switch the pump on. Only a complete`{…}`
+frame received within 200 ms is acted on (`calibrate`,`tare`,`co2zero`, …).
 
 The Mega streams telemetry as newline JSON the bridge ingests, including the
 load-cell masses, DHT11 temp/humidity, CO2, O2, and flow/dose events such as:
@@ -303,7 +304,7 @@ loop() {
 | Risk | Mitigation |
 |---|---|
 | Servo stall current spike | Dedicated 5 V/3 A PSU with 30 % headroom; bulk capacitor across servo rail |
-| USB cable disconnect during streaming |`CameraCapture` reader thread auto-reopens; ffmpeg restart with backoff |
+| USB cable disconnect during streaming |`CameraCapture` reader thread auto-reopens; ffmpeg restarted after 2 s |
 | Pi power loss mid-write | SQLite WAL mode +`checkpoint_wal()` on boot to clear stale locks |
 | DHT11 wire short to 5 V | Mega's GPIO is 5 V-tolerant, no level-shifter needed; **input pin clamped via internal protection diode** |
 | Servo over-rotation | Firmware clamps to 0 to 180 ° and refuses commands outside that range |
@@ -347,9 +348,6 @@ DHT11 wire             camera-stream         env-ingester       FastAPI backend
                                                          evaluate_rules()
                                                                   │
                                                                   ▼
-                                                         anomaly.observe()
-                                                                  │
-                                                                  ▼
                                                        broadcast WS event
                                                                   │
                                                                   ▼
@@ -357,8 +355,10 @@ DHT11 wire             camera-stream         env-ingester       FastAPI backend
                                                           updates live
 ```
 
-Latency budget (measured end-to-end): wire → dashboard ≈ **800 ms p95**
-(of which 30 s is the env-ingester poll interval; the WS publish is < 50 ms).
+Latency budget (reported, raw data not in this repo): wire → dashboard ≈ **800 ms p95**
+for readings the bridge posts directly; the WS publish is < 50 ms. Environment
+readings additionally wait up to 30 s for the env-ingester poll. The anomaly
+detector runs in the aggregator loop every 10 s, not on ingest.
 
 ---
 
@@ -367,12 +367,12 @@ Latency budget (measured end-to-end): wire → dashboard ≈ **800 ms p95**
 | Surface | Control |
 |---|---|
 | Public HTTPS | Cloudflare-terminated TLS (≥ 1.2), HSTS 1 year, CSP, JWT auth |
-| LAN HTTP (raspberrypi.local:8000) | Same JWT auth; only accessible from same subnet |
+| LAN HTTP (Pi:8000) | Same JWT auth; only accessible from same subnet |
 | USB-serial | Local-only, no auth needed (physical access required to attach the Mega) |
-| systemd user services | Run as`pi`, no root daemons, polkit rules narrow sudo to specific binaries |
+| systemd user services | Run as an unprivileged user, no root daemons. **Known gap:**`scripts/pi-deploy.sh` grants that user passwordless sudo for`systemctl`,`mkdir`,`tee` and`rm`, which is effectively root |
 | SSH | Key-only auth (`~/.ssh/id_ed25519_pi`), password disabled |
 | Auto-deploy | Pull-only, Pi never accepts pushes; supply-chain risk is bounded to commits visible on GitHub`main` |
-| Camera streams |`cam.example.org` requires either same JWT or LAN access (currently anonymous on LAN by design, researcher-only network) |
+| Camera service (:8090) | **No authentication.** Streams and the control endpoints (pump, servo, reboot, firmware upload) are open to anyone who can reach port 8090; the design relies on a researcher-only network. Known gap |
 
 ---
 
@@ -381,11 +381,11 @@ Latency budget (measured end-to-end): wire → dashboard ≈ **800 ms p95**
 | Failure | Symptom | Auto-recovery |
 |---|---|---|
 | Arduino disconnect |`/sensor/env` returns`connected:false` | Camera-stream waits for`/dev/ttyACM*` to reappear, reopens automatically |
-| Camera disconnect | Stream stalls,`/snapshot` 503 |`CameraCapture` restarts the ffmpeg subprocess on EOF, with exponential backoff |
+| Camera disconnect | Stream stalls,`/snapshot` 503 |`CameraCapture` restarts the ffmpeg subprocess on EOF after a fixed 2 s |
 | Backend OOM / crash | 502 from Cloudflare |`systemd --user` restarts within 1 s (`Restart=on-failure`) |
 | Cloudflare tunnel drop | example.org unreachable |`cloudflared` re-establishes within 5 s; outbound-only so no firewall to negotiate |
 | Pi loses network | Auto-deploys queue |`Persistent=true` on the timer fires the missed`OnUnitInactiveSec` once connectivity returns |
-| Bad commit on`main` | Service may fail to start | Last-good binary stays in`~/ivc-backend/`; only changed subsystems restart, so unrelated services keep running |
+| Bad commit on`main` | Service may fail to start | Only changed subsystems restart, so unrelated services keep running. There is **no automatic rollback**: revert the commit and the next poll redeploys it |
 
 ---
 
@@ -404,7 +404,7 @@ git clone https://github.com/aghasalim/smart-ivc-cage-platform.git ~/IndustryPro
 # 4. Wire the Arduino Mega per § 3.1, plug in USB
 # 5. Flash the firmware
 sudo avrdude -v -patmega2560 -cwiring -P/dev/ttyACM0 -b115200 -D \
-     -Uflash:w:/home/pi/ivc_sensors.hex:i
+     -Uflash:w:$HOME/ivc_sensors.hex:i
 
 # 6. Enable auto-deploy + start services
 systemctl --user enable --now ivc-backend ivc-cameras ivc-env-ingester pi-deploy.timer

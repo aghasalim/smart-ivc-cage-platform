@@ -98,8 +98,8 @@ async function setServo(
   return res.json();
 }
 
-// Water pump — closed-loop exact-volume dose (Arduino reads YF-S401 flow sensor
-// and stops the pump + closes the siphon-prevention valve at the target mL).
+// Water pump — volume dose. The Pi runs it open-loop (pump time = mL / calibrated
+// rate) because the flow sensor is too noisy; the valve closes on stop against siphoning.
 async function dispensePump(volumeMl: number): Promise<{ ok: boolean }> {
   const res = await fetch(`${PI_STREAM_URL}/pump`, {
     method: 'POST',
@@ -550,9 +550,9 @@ function ValveCard({
 }
 
 // ── Water pump card (replaces the legacy water-valve servo control) ───────────
-// The water side is a real pump + flow sensor (closed-loop dose by mL), not a
-// servo. The Arduino reads the YF-S401 flow sensor and stops the pump at the
-// target volume; the solenoid valve closes on stop to defeat siphon overshoot.
+// The water side is a real pump (timed dose by mL at a calibrated rate), not a
+// servo. The firmware's flow-sensor closed loop exists but the sensor is too
+// noisy to use; the solenoid valve closes on stop to defeat siphon overshoot.
 
 function WaterPumpCard({
   icon,
