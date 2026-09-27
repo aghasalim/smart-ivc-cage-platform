@@ -95,16 +95,14 @@ Delivering an *exact* volume of water to a mouse is harder than running a pump
 for N seconds, and getting it wrong corrupts the intake measurement the whole
 experiment depends on.
 
-- A **YF-S401 flow sensor** (7.5 pulses/mL) counts what is actually delivered,
-  rather than assuming a flow rate.
+- A **YF-S401 flow sensor** (7.5 pulses/mL) counts what is actually delivered.
 - The pump **stops early and coasts**: water already in the pipe keeps moving
   after the pump cuts, so the controller subtracts the measured coast volume and
-  lands on target instead of overshooting every dose.
+  lands on target without overshooting.
 - A **normally-closed solenoid valve** closes the instant the pump stops. Without
   it, gravity siphons the tank through the line and the "dose" silently continues
   after the controller thinks it finished.
-- If flow stalls mid-dose, the pump **auto-cycles to recover** rather than
-  reporting a completed dose that never arrived.
+- If flow stalls mid-dose, the pump **auto-cycles to recover**, so it never reports a dose that did not arrive.
 
 Each of those four is a failure mode that produces *plausible but wrong* data,
 which is the worst kind in an experiment.
@@ -112,7 +110,7 @@ which is the worst kind in an experiment.
 ### A DHT11 driver written from the datasheet
 
 The temperature/humidity sensor is driven by an inline-protocol implementation
-in firmware instead of a library, the single-wire timing is handled directly
+in firmware with no library, the single-wire timing is handled directly
 against the datasheet. Timing diagram in [`docs/HARDWARE.md`](docs/HARDWARE.md).
 
 ### Cameras that survive more than one viewer
@@ -120,8 +118,7 @@ against the datasheet. Timing diagram in [`docs/HARDWARE.md`](docs/HARDWARE.md).
 The first camera implementation returned 503s as soon as two dashboard sessions
 opened the same stream, each request tried to own the capture device. It now
 runs a **persistent ffmpeg process per camera with a shared frame cache**, so
-concurrent viewers read the same decoded frame instead of contending for
-hardware.
+concurrent viewers read the same decoded frame and do not fight over the hardware.
 
 ### A deployment with no inbound ports
 
@@ -258,7 +255,7 @@ there was the real-time inference integration that runs it in the live loop
 
 ## References
 
-This is a platform instead of a method, so the list is short and the entries
+This is a platform, not a method, so the list is short and the entries
 are standards and tools the implementation follows, not results it reproduces.
 
 - **Directive 2010/63/EU on the protection of animals used for scientific purposes.** [eur-lex.europa.eu/eli/dir/2010/63/oj](https://eur-lex.europa.eu/eli/dir/2010/63/oj) The regime any live-animal use would fall under. This project never ran on live animals and never obtained ethical approval, which is stated in the scope section and is the reason the behaviour accuracy here is unmeasured.
