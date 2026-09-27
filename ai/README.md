@@ -161,4 +161,4 @@ The system scales from a single cage to a full rack with no code changes.
 | Per-cage model | Each cage gets its own SGD model that adapts to its animals independently |
 | Dashboard | Aggregates all`cage_*_realtime_summary.csv` files, identical schema, single`pd.concat` |
 | Adding a cage | No code changes, launch a new instance with a different camera source and output path |
-| Hardware cost | €137 per cage (Raspberry Pi 4 + infrared camera + storage); no GPU required |
+| Hardware cost | €137 per cage in the original Pi 4 projection; the delivered unit is a Pi 5 (8 GB), see`reports/cost_projection.md`. No GPU required |
