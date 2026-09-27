@@ -35,14 +35,14 @@ No GPU required, all models are CPU-only (sklearn).
 
 | Component | Shipped part | Change vs. original plan |
 |---|---|---|
-| SBC | Raspberry Pi 5 (4 GB) | Upgraded from Pi 4 |
+| SBC | Raspberry Pi 5 (8 GB) | Upgraded from Pi 4 |
 | Microcontroller | Arduino Mega 2560 | New, handles all sensor I/O |
 | Load cells | 3× HX711 + load cell (food/water/animal weight) | New, replaces camera-based weight estimation |
 | Flow sensor | YF-S401 (water flow) | New |
 | Temperature/humidity | DHT11 | New |
 | Actuators | Pump relay, valve relay, food servo | New |
-| O2 sensor | USB electrochemical O2 sensor | New, replaces IR USB camera |
-| Camera | Removed from shipped unit | Pi 4 + IR USB camera plan abandoned |
+| O2 sensor | USB electrochemical O2 sensor | New |
+| Cameras | USB UVC infrared cameras (MJPEG) on a powered hub | Kept for behaviour monitoring; no longer used for weight estimation (the load cells do that) |
 
 The per-cage hardware BOM cost is higher than the original €137 estimate; a revised BOM is tracked in`docs/HARDWARE.md`.
 
