@@ -57,7 +57,7 @@ genuinely hard tabular problem you would expect them to separate.
 
 **No labelled real-animal data was ever collected**, because the cage hardware
 and the ethical approval for live animals were outside the project's scope. So
-the honest claim is narrow: *the inference path is built, integrated and running
+the defensible claim is narrow: *the inference path is built, integrated and running
 end to end, and its accuracy on real behaviour is unmeasured.* The pipeline is
 the deliverable; the score is not evidence.
 
@@ -85,7 +85,7 @@ thing that was validated offline.
 ![confusion matrix on the synthetic test split](ai/reports/figures/confusion.png)
 
 Included for completeness, and it should be read against the separability figure
-above rather than on its own.
+above, not on its own.
 
 ## The engineering I would actually point at
 
@@ -112,7 +112,7 @@ which is the worst kind in an experiment.
 ### A DHT11 driver written from the datasheet
 
 The temperature/humidity sensor is driven by an inline-protocol implementation
-in firmware rather than a library, the single-wire timing is handled directly
+in firmware instead of a library, the single-wire timing is handled directly
 against the datasheet. Timing diagram in [`docs/HARDWARE.md`](docs/HARDWARE.md).
 
 ### Cameras that survive more than one viewer
@@ -218,19 +218,19 @@ cd backend && pip install -r requirements.txt pytest && pytest
 
 ## Limitations
 
-**The behaviour classifier has never seen a real mouse.** See above. Everything
+The behaviour classifier has never seen a real mouse. See above. Everything
 about the inference path is real; the accuracy figure is not transferable.
 
-**No live hardware in this repository.** The trained YOLO/tracking weights
+No live hardware in this repository. The trained YOLO/tracking weights
 (~43 MB) are excluded, they are a teammate's artefacts and large. The
 behaviour model artefact is kept so the backend runs on a fresh clone, and the
 backend falls back to a deterministic rule-based classifier if it is missing.
 
-**Single-cage validation.** The data model and simulator support many cages,
+Single-cage validation. The data model and simulator support many cages,
 but only one physical cage was ever assembled, so multi-cage behaviour is
 untested against hardware.
 
-**SQLite.** Fine for one Pi and one cage; the write path would need Postgres
+SQLite. Fine for one Pi and one cage; the write path would need Postgres
 before this scaled to a rack.
 
 ---
@@ -258,7 +258,7 @@ there was the real-time inference integration that runs it in the live loop
 
 ## References
 
-This is a platform rather than a method, so the list is short and the entries
+This is a platform instead of a method, so the list is short and the entries
 are standards and tools the implementation follows, not results it reproduces.
 
 - **Directive 2010/63/EU on the protection of animals used for scientific purposes.** [eur-lex.europa.eu/eli/dir/2010/63/oj](https://eur-lex.europa.eu/eli/dir/2010/63/oj) The regime any live-animal use would fall under. This project never ran on live animals and never obtained ethical approval, which is stated in the scope section and is the reason the behaviour accuracy here is unmeasured.
