@@ -84,8 +84,7 @@ thing that was validated offline.
 
 ![confusion matrix on the synthetic test split](ai/reports/figures/confusion.png)
 
-Included for completeness, and it should be read against the separability figure
-above, not on its own.
+Included for completeness, and it should be read against the separability figure above.
 
 ## The engineering I would actually point at
 
@@ -255,8 +254,8 @@ there was the real-time inference integration that runs it in the live loop
 
 ## References
 
-This is a platform, not a method, so the list is short and the entries
-are standards and tools the implementation follows, not results it reproduces.
+This is a platform, so the list is short and the entries
+are standards and tools the implementation follows.
 
 - **Directive 2010/63/EU on the protection of animals used for scientific purposes.** [eur-lex.europa.eu/eli/dir/2010/63/oj](https://eur-lex.europa.eu/eli/dir/2010/63/oj) The regime any live-animal use would fall under. This project never ran on live animals and never obtained ethical approval, which is stated in the scope section and is the reason the behaviour accuracy here is unmeasured.
 - **Leys, Ley, Klein, Bernard, Licata. Detecting outliers: Do not use standard deviation around the mean, use absolute deviation around the median. Journal of Experimental Social Psychology 49, 2013.** [doi:10.1016/j.jesp.2013.03.013](https://doi.org/10.1016/j.jesp.2013.03.013) The median absolute deviation rule used by the anomaly detector.
