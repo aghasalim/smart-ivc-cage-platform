@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: If you use this work, please cite it as below.
+title: "Smart IVC cage, the software platform"
+abstract: "Software platform for an instrumented lab-animal IVC cage: FastAPI, React, Arduino and Raspberry Pi, closed-loop water dosing, and why the 0.996 F1 means less than it looks."
+type: software
+authors:
+  - family-names: Mustafazada
+    given-names: Aghasalim
+    orcid: "https://orcid.org/0009-0001-8746-4582"
+    affiliation: "Howest University of Applied Sciences"
+repository-code: "https://github.com/aghasalim/smart-ivc-cage-platform"
+url: "https://aghasalim.github.io/"
+license: MIT
+keywords:
+  - arduino
+  - fastapi
+  - iot
+  - python
+  - raspberry pi
+  - react
+  - typescript
