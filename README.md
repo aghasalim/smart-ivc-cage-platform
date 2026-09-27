@@ -218,17 +218,20 @@ cd backend && pip install -r requirements.txt pytest && pytest
 
 ## Limitations
 
-- **The behaviour classifier has never seen a real mouse.** See above. Everything
-  about the inference path is real; the accuracy figure is not transferable.
-- **No live hardware in this repository.** The trained YOLO/tracking weights
-  (~43 MB) are excluded, they are a teammate's artefacts and large. The
-  behaviour model artefact is kept so the backend runs on a fresh clone, and the
-  backend falls back to a deterministic rule-based classifier if it is missing.
-- **Single-cage validation.** The data model and simulator support many cages,
-  but only one physical cage was ever assembled, so multi-cage behaviour is
-  untested against hardware.
-- **SQLite.** Fine for one Pi and one cage; the write path would need Postgres
-  before this scaled to a rack.
+**The behaviour classifier has never seen a real mouse.** See above. Everything
+about the inference path is real; the accuracy figure is not transferable.
+
+**No live hardware in this repository.** The trained YOLO/tracking weights
+(~43 MB) are excluded, they are a teammate's artefacts and large. The
+behaviour model artefact is kept so the backend runs on a fresh clone, and the
+backend falls back to a deterministic rule-based classifier if it is missing.
+
+**Single-cage validation.** The data model and simulator support many cages,
+but only one physical cage was ever assembled, so multi-cage behaviour is
+untested against hardware.
+
+**SQLite.** Fine for one Pi and one cage; the write path would need Postgres
+before this scaled to a rack.
 
 ---
 
