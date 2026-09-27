@@ -8,6 +8,7 @@ authors:
     given-names: Aghasalim
     orcid: "https://orcid.org/0009-0001-8746-4582"
     affiliation: "Howest University of Applied Sciences"
+doi: "10.5281/zenodo.23003680"
 repository-code: "https://github.com/aghasalim/smart-ivc-cage-platform"
 url: "https://aghasalim.github.io/"
 license: MIT

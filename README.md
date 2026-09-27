@@ -1,5 +1,7 @@
 # Smart IVC cage, the software platform
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003680.svg)](https://doi.org/10.5281/zenodo.23003680)
+
 A full software stack for an instrumented **individually ventilated cage (IVC)**
 used in laboratory animal research: precision feeding, volumetric water dosing,
 load-cell mass sensing, metabolic gas analysis, camera monitoring and behaviour
