@@ -221,7 +221,7 @@
     },
     "pump": {
       "title": "Waterpomp",
-      "closedLoop": "Closed-loop",
+      "closedLoop": "Getimede dosis",
       "volumeMl": "Volume (mL)",
       "dispense": "Doseren",
       "dispensing": "Bezig met doseren…",
@@ -411,7 +411,7 @@
     "unreachableTitle": "Pi-streamer onbereikbaar",
     "unreachableDesc": "Kan de streamingservice op {{url}} niet bereiken. Camera's vereisen dat het dashboard draait op dezelfde machine als de LAN-kabel van de Pi.",
     "troubleshoot": {
-      "1": "Controleer of de Pi via Ethernet is verbonden en raspberrypi.local heeft",
+      "1": "Controleer of de Pi op het netwerk zit en bereikbaar is op VITE_PI_STREAM_URL",
       "2": "Op de Pi: sudo systemctl status ivc-cameras",
       "3": "Vanaf de Mac: curl http://raspberrypi.local:8090/health"
     },

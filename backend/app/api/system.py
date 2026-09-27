@@ -84,7 +84,6 @@ async def _cam_post(path: str, body: dict[str, Any]) -> dict[str, Any]:
                             detail={"code": "PI_BAD_JSON", "message": r.text[:200]})
 _DEPLOY_LOG_CANDIDATES = [
     Path.home() / "pi-deploy.log",
-    Path("/home/pi/pi-deploy.log"),
     Path("/tmp/pi-deploy.log"),
 ]
 _SERVICES = ["ivc-backend", "ivc-cameras", "ivc-env-ingester"]

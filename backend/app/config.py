@@ -41,7 +41,6 @@ class Settings(BaseSettings):
     # Host header allowlist used by TrustedHostMiddleware in non-dev environments.
     # Wildcard subdomains like "*.vercel.app" are supported.
     trusted_hosts: List[str] = [
-        "example.up.railway.app",
         "*.up.railway.app",
         "*.vercel.app",
         "localhost",

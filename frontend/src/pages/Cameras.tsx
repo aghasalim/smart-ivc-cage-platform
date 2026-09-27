@@ -1181,7 +1181,8 @@ function CamDetectionTile({
 // Detect whether we're using the direct Pi LAN address or a tunnel/proxy.
 // MJPEG streaming works natively on LAN; tunnels (Cloudflare etc.) buffer
 // chunked responses and break MJPEG, so we fall back to snapshot polling.
-const isDirectLan = PI_STREAM_URL.startsWith('http://192.168.') ||
+const isDirectLan = /^http:\/\/[^/:]+\.local[:/]/.test(PI_STREAM_URL) ||
+                    PI_STREAM_URL.startsWith('http://192.168.') ||
                     PI_STREAM_URL.startsWith('http://10.') ||
                     PI_STREAM_URL.startsWith('http://172.');
 

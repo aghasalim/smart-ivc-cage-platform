@@ -23,7 +23,7 @@ from scipy.optimize import linear_sum_assignment
 from ultralytics import YOLO
 
 # ── Constants ─────────────────────────────────────────────────────────────────
-VIDEO_PATH       = r"~\Desktop\multiple_mouse.mp4"
+VIDEO_PATH       = os.environ.get("VIDEO_PATH", "multiple_mouse.mp4")
 YOLO_MODEL_PATH  = "outputs/Fine_Tuned.pt"
 OUTPUT_CSV       = "outputs/multi_mouse_tracked.csv"
 FRAME_SKIP       = 2

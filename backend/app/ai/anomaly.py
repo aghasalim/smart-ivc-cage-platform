@@ -16,7 +16,7 @@ Why a second model?
     and circadian-rhythm disruption *before* it crosses a hard rule
     threshold.
 
-Algorithm: robust per-cage z-score using **EWMA + MAD** (Median Absolute
+Algorithm: robust per-cage z-score using **rolling median + MAD** (Median Absolute
 Deviation).  We deliberately avoid mean+stdev because the median/MAD pair
 is resistant to the very anomalies we're trying to detect; we deliberately
 avoid Isolation Forest / one-class SVM because:
@@ -40,7 +40,7 @@ from typing import Deque
 log = logging.getLogger(__name__)
 
 # Sliding window of recent samples used to estimate the baseline.
-# 240 samples × 30s aggregator tick ≈ 2 hours of history per cage per metric.
+# 240 samples × 10 s aggregator tick ≈ 40 minutes of history per cage per metric.
 _WINDOW = 240
 # Minimum samples before we trust the baseline (otherwise everything looks
 # anomalous when a fresh cage comes online).

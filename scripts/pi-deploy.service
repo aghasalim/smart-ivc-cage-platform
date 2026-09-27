@@ -5,7 +5,7 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-WorkingDirectory=/home/pi/IndustryProject
-ExecStart=/home/pi/IndustryProject/scripts/pi-deploy.sh
+WorkingDirectory=%h/IndustryProject
+ExecStart=%h/IndustryProject/scripts/pi-deploy.sh
 # 5 min hard cap so a stuck npm install can't pile up
 TimeoutStartSec=300

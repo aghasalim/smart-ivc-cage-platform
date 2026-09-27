@@ -1,7 +1,7 @@
 # Smart IVC cage, the software platform
 
 A full software stack for an instrumented **individually ventilated cage (IVC)**
-used in laboratory animal research: precision feeding, closed-loop water dosing,
+used in laboratory animal research: precision feeding, volumetric water dosing,
 load-cell mass sensing, metabolic gas analysis, camera monitoring and behaviour
 classification, running on a Raspberry Pi 5 next to the cage, reachable from
 anywhere, and redeploying itself within 60 seconds of a push.
@@ -71,8 +71,9 @@ approval.
 
 ![a real session, as the dashboard sees it](ai/reports/figures/behaviour-timeline.png)
 
-284 windows of camera output from the actual rig, which is the part of the AI
-stack that is not synthetic. Thigmotaxis is wall-hugging, a standard anxiety proxy
+284 ten-minute windows (about 47 hours) of real, non-synthetic infrared footage of
+a single mouse, run through the same pipeline; the footage was supplied for the
+project, not recorded on this cage. Thigmotaxis is wall-hugging, a standard anxiety proxy
 in rodent work, and it is tracked alongside movement because either alone is
 ambiguous.
 
@@ -88,7 +89,15 @@ Included for completeness, and it should be read against the separability figure
 
 ## The engineering I would actually point at
 
-### Closed-loop volumetric water dosing
+### Volumetric water dosing, and why it runs open-loop
+
+The firmware implements closed-loop dosing, described below. On the assembled
+cage the flow sensor picked up about 200 phantom pulses per second of electrical
+noise, which made the loop cut the pump almost immediately, and the water load
+cell did not track the reservoir. The dashboard therefore doses open-loop: it
+runs the pump for volume / rate seconds, with the rate calibrated on the scale
+(4.5 mL/s) and hard caps on time and volume. The closed loop is ready for when
+the sensor wiring is fixed.
 
 Delivering an *exact* volume of water to a mouse is harder than running a pump
 for N seconds, and getting it wrong corrupts the intake measurement the whole
@@ -108,9 +117,10 @@ which is the worst kind in an experiment.
 
 ### A DHT11 driver written from the datasheet
 
-The temperature/humidity sensor is driven by an inline-protocol implementation
-in firmware with no library, the single-wire timing is handled directly
-against the datasheet. Timing diagram in [`docs/HARDWARE.md`](docs/HARDWARE.md).
+An earlier firmware (`device/arduino/valve_controller/`) drives the
+temperature/humidity sensor with an inline-protocol implementation written
+against the datasheet's single-wire timing. The current sketch
+(`device/arduino/ivc_sensors/`) reads it through the standard DHT library. Timing diagram in [`docs/HARDWARE.md`](docs/HARDWARE.md).
 
 ### Cameras that survive more than one viewer
 
@@ -204,7 +214,8 @@ Backend tests:
 cd backend && pip install -r requirements.txt pytest && pytest
 ```
 
-18 tests, covering auth, role enforcement, ingest round-trip and health.
+18 tests: 8 for auth, role enforcement, security headers, the ingest round-trip and
+health, and 10 for the feeding scheduler's time windows.
 
 > The default credentials in`.env.example` are placeholders (`change-me-please`).
 > They are seeded only on first boot and must be changed before any real
@@ -219,8 +230,9 @@ about the inference path is real; the accuracy figure is not transferable.
 
 No live hardware in this repository. The trained YOLO/tracking weights
 (~43 MB) are excluded, they are a teammate's artefacts and large. The
-behaviour model artefact is kept so the backend runs on a fresh clone, and the
-backend falls back to a deterministic rule-based classifier if it is missing.
+behaviour model artefact is not committed either (`*.pkl` is git-ignored): a
+fresh clone uses a deterministic rule-based classifier until
+`ai/training/train.py` is run to produce it.
 
 Single-cage validation. The data model and simulator support many cages,
 but only one physical cage was ever assembled, so multi-cage behaviour is

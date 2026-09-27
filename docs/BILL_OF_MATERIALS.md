@@ -52,7 +52,7 @@
 
 ---
 
-## 4. Water delivery & flow (closed-loop dosing)
+## 4. Water delivery & flow (dosing; the flow-sensor loop is unused on this build)
 
 | # | Component | Qty | Key spec | Interface / connection | Purpose | Est. € |
 |---|-----------|:--:|----------|------------------------|---------|------:|

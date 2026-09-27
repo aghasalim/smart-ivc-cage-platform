@@ -3,7 +3,13 @@
 Long form detail moved out of the README.
 
 
-### Closed-loop volumetric water dosing
+### Closed-loop volumetric water dosing (firmware)
+
+> **As deployed, dosing ran open-loop.** On the assembled cage the flow sensor
+> picked up ~200 phantom pulses/s of electrical noise, so the dashboard doses by
+> time at a scale-calibrated 4.5 mL/s with hard caps (`device/camera-stream/server.py`).
+> The closed loop described below is implemented in the firmware and is ready
+> for when the sensor wiring is fixed.
 
 
 Delivering an *exact* volume of water to a mouse is harder than running a pump

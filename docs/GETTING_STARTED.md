@@ -119,9 +119,10 @@ Three control groups, all backed by real hardware actions:
 - **Manual feed/valve control**: open, close, or timed-pulse the food gate
   directly from the dashboard.
 - **Water pump dosing**: request an **exact volume in mL** (quick presets
-  5/10/15/25/50 or a custom value). The Arduino runs the pump under closed-loop
-  flow-sensor feedback with early-stop coast compensation and a siphon-prevention
-  valve, stopping at the calibrated target.
+  5/10/15/25/50 or a custom value). The pump runs for volume / rate seconds at a
+  scale-calibrated rate (4.5 mL/s) with hard caps, and a siphon-prevention valve
+  closes on stop. (The firmware's flow-sensor closed loop exists but the sensor
+  is too noisy on this build.)
 - **Mouse platform control**: a directional (RC-style) control panel.
 
 #### 🖥 System

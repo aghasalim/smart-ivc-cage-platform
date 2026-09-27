@@ -221,7 +221,7 @@
     },
     "pump": {
       "title": "Water pump",
-      "closedLoop": "Closed-loop",
+      "closedLoop": "Timed dose",
       "volumeMl": "Volume (mL)",
       "dispense": "Dispense",
       "dispensing": "Dispensing…",
@@ -411,7 +411,7 @@
     "unreachableTitle": "Pi streamer unreachable",
     "unreachableDesc": "Can't reach the streaming service at {{url}}. Cameras require the dashboard to run on the same machine as the Pi's LAN cable.",
     "troubleshoot": {
-      "1": "Verify the Pi is connected via Ethernet and assigned raspberrypi.local",
+      "1": "Verify the Pi is on the network and reachable at VITE_PI_STREAM_URL",
       "2": "On the Pi: sudo systemctl status ivc-cameras",
       "3": "From the Mac: curl http://raspberrypi.local:8090/health"
     },

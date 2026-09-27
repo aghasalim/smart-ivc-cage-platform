@@ -1,4 +1,4 @@
-Contact: mailto:security@example.org
+Contact: https://github.com/aghasalim/smart-ivc-cage-platform/security/advisories/new
 Preferred-Languages: en, nl
 Canonical: https://example.org/.well-known/security.txt
 Policy: https://example.org/about

@@ -206,9 +206,9 @@ anomaly detector asks the orthogonal question: *is this normal **for this
 animal**?* This catches early metabolic stress, dehydration onset and
 equipment drift that the classifier alone would miss.
 
-**Algorithm:** EWMA + **MAD** (Median Absolute Deviation) for robust
+**Algorithm:** rolling median + **MAD** (Median Absolute Deviation) for robust
 per-cage z-scoring. Each`(cage, metric)` pair has its own sliding window
-of 240 samples (≈ 2 h of history). |z| ≥ 3 → *info*; |z| ≥ 4.5 → *warning*.
+of 240 samples (≈ 40 min at the 10 s aggregator tick). |z| ≥ 3 → *info*; |z| ≥ 4.5 → *warning*.
 
 **Why MAD instead of Isolation Forest / one-class SVM?**
 

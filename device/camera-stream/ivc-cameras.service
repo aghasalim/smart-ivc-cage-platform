@@ -4,6 +4,7 @@ After=network.target
 
 [Service]
 Type=simple
+# System unit (installed in /etc/systemd/system): set User= and the paths to your Pi account.
 User=pi
 WorkingDirectory=/home/pi/camera-stream
 EnvironmentFile=-/home/pi/camera-stream/env

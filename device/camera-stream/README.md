@@ -39,10 +39,9 @@ No`cv2`/OpenCV needed, capture goes through`ffmpeg` for zero-copy MJPEG passthro
 
 ## Network layout
 
-Pi is configured at static`raspberrypi.local/24` on`eth0`, directly cabled to the
-dev Mac's USB-Ethernet adapter (`en7` at`dev-machine.local/24`). The dashboard's
-`VITE_PI_STREAM_URL` defaults to`http://raspberrypi.local:8090`.
+In development the Pi was cabled directly to the dev machine on a small static
+subnet. The dashboard's`VITE_PI_STREAM_URL` defaults to
+`http://raspberrypi.local:8090`; point it at your Pi's LAN name or address.
 
-Because this address is on a direct link, the`/cameras` page only works when
-running the dashboard locally (Vite dev server) on the Mac that has the LAN
-cable plugged in.
+On a direct link or LAN the`/cameras` page streams MJPEG natively; through a
+tunnel it falls back to snapshot long-polling.

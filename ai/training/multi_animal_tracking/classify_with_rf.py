@@ -24,10 +24,8 @@ import numpy as np
 import pandas as pd
 
 # ── Model paths (absolute — RF v3 lives in behavioral_monitoring/) ────────────
-RF_MODEL_PATH  = (r"~\Desktop\Behavioral Monitoring System"
-                  r"\behavioral_monitoring\outputs\state_classifier_v3.pkl")
-FEATURE_COLS_PATH = (r"~\Desktop\Behavioral Monitoring System"
-                     r"\behavioral_monitoring\outputs\feature_columns_v3.json")
+RF_MODEL_PATH     = os.environ.get("RF_MODEL_PATH", "../behavioral_monitoring/outputs/state_classifier_v3.pkl")
+FEATURE_COLS_PATH = os.environ.get("FEATURE_COLS_PATH", "../behavioral_monitoring/outputs/feature_columns_v3.json")
 
 # ── Data paths (relative — run from multi_animal_tracking/) ──────────────────
 TRACKED_CSV    = "outputs/multi_mouse_tracked.csv"
