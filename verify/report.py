@@ -40,11 +40,15 @@ for i in range(n):
     f1s.append(f1)
 
     name = classes[i]
-    pub = report.get(name, {})
-    for metric, got in [("precision", precision), ("recall", recall), ("f1-score", f1)]:
-        pub_val = pub.get(metric)
-        if pub_val is not None and abs(got - pub_val) > TOL:
-            fail(f"{name} {metric}: published {pub_val:.4f}, recomputed {got:.4f}")
+    if name not in report:
+        fail(f"{name}: missing from the published report")
+        continue
+    pub = report[name]
+    for metric, got in [("precision", precision), ("recall", recall), ("f1-score", f1), ("support", support)]:
+        if metric not in pub:
+            fail(f"{name} {metric}: missing from the published report")
+        elif abs(got - pub[metric]) > TOL:
+            fail(f"{name} {metric}: published {pub[metric]:.4f}, recomputed {got:.4f}")
 
 macro_f1 = sum(f1s) / n
 if abs(macro_f1 - published_f1) > TOL:
