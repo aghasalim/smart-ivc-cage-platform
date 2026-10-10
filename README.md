@@ -2,50 +2,48 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003680.svg)](https://doi.org/10.5281/zenodo.23003680)
 
-A full software stack for an instrumented **individually ventilated cage (IVC)**
-used in laboratory animal research: precision feeding, volumetric water dosing,
-load-cell mass sensing, metabolic gas analysis, camera monitoring and behaviour
-classification, running on a Raspberry Pi 5 next to the cage, reachable from
-anywhere, and redeploying itself within 60 seconds of a push.
+This is the software for an instrumented individually ventilated cage (IVC), the
+kind used in lab animal research. It handles feeding, water dosing, load-cell
+weighing, gas analysis, cameras and behaviour classification. It all runs on a
+Raspberry Pi 5 next to the cage. You can reach it from anywhere, and it redeploys
+itself within 60 seconds of a push.
 
-Built as a third-year Industry Project at Howest University of Applied Sciences
-for an external client in animal-research instrumentation.
+We built it for our third-year Industry Project at Howest University of Applied
+Sciences, for an outside client that makes animal-research equipment.
 
-> **This was a three-person team project, and this repository is a sanitised
-> extract of it.** I contributed 173 of 204 commits and own the backend, the
+> This was a three-person team project, and this repo is a cleaned-up extract of
+> it. I made 173 of 204 commits and was responsible for the backend, the
 > dashboard, the device/firmware layer and the deployment pipeline. The
-> behaviour-classification models were principally the work of a teammate
-> see [Attribution](#attribution). Client identifiers, meeting minutes, peer
-> evaluations and production hostnames have been removed; nothing here is
-> confidential.
+> behaviour-classification models were mostly a teammate's work, see
+> [Attribution](#attribution). I removed client identifiers, meeting minutes, peer
+> evaluations and production hostnames, so nothing here is confidential.
 
 ---
 
 ## The number I am not going to advertise
 
-The original report leads with **macro-F1 0.996** for the behaviour classifier.
-That number is real, reproducible, and close to meaningless, and it is worth
-explaining why, because it is the most instructive thing in the project. It and
-every other measured figure below are recomputed from the raw metrics by
-independent implementations in `verify/`, and CI fails the build if any of them
-disagree.
+Our original report opens with macro-F1 0.996 for the behaviour classifier.
+The number is real and you can reproduce it, but it means almost nothing. I think
+explaining why is the most useful thing I learned on this project. The code in
+`verify/` recomputes it, and every other measured figure below, from the raw
+metrics, and CI fails the build if any of them disagree.
 
-The classifier is trained and tested on a **synthetic dataset** produced by
-`ai/training/generate_dataset.py`, a hand-written generator that seeds labels
-from a rule-based distribution (mice are nocturnal, eat in bouts, sleep during
-the day). The model then learns to recover those rules. Testing on a held-out
-split of the *same generator* measures how separable the generator made its own
-classes, not whether the system can classify a real mouse.
+The classifier is trained and tested on a synthetic dataset made by
+`ai/training/generate_dataset.py`. That's a generator we wrote by hand. It picks
+labels from rules (mice are nocturnal, eat in bouts, sleep during the day), and the
+model then learns those rules back. Testing on a held-out split from the same
+generator only shows how separable the generator made its own classes. It says
+nothing about classifying a real mouse.
 
 ![why the synthetic macro-F1 is meaningless](ai/reports/figures/synthetic-separability.png)
 
-Left: the generator writes each behaviour as its own band of`movement_cm`. Sleeping
-never exceeds 0.3 cm, resting stops at 1.0, exploring starts at 6.0. Right: an
-unpruned decision tree on those features reaches macro-F1 0.9936, which is the
-reported random-forest number to within 0.003. The classifier is recovering the
-rules the generator wrote, and nothing else.
+On the left, you can see the generator gives each behaviour its own band of
+`movement_cm`. Sleeping never goes above 0.3 cm, resting stops at 1.0, and exploring
+starts at 6.0. On the right, an unpruned decision tree on those features reaches
+macro-F1 0.9936. That's within 0.003 of the reported random-forest number. So the
+classifier is just recovering the rules the generator wrote.
 
-Two independent signals say the task is close to trivial:
+The model comparison points the same way, that the task is close to trivial.
 
 | model | macro-F1 (held-out synthetic) |
 |---|---:|
@@ -53,19 +51,18 @@ Two independent signals say the task is close to trivial:
 | hist gradient boosting | 0.996 |
 | logistic regression | 0.935 |
 
-Two unrelated model families landing on the *identical* score, with a linear
-model only six points behind, is what a saturated benchmark looks like. On a
-genuinely hard tabular problem you would expect them to separate.
+Two unrelated model families get exactly the same score, and a linear model is
+only six points behind. That's what a saturated benchmark looks like. On a really
+hard tabular problem you'd expect them to spread out.
 
-**No labelled real-animal data was ever collected**, because the cage hardware
-and the ethical approval for live animals were outside the project's scope. So
-the defensible claim is narrow: *the inference path is built, integrated and running
-end to end, and its accuracy on real behaviour is unmeasured.* The pipeline is
-the deliverable; the score is not evidence.
+We never collected labelled data from real animals. The cage hardware and ethical
+approval for live animals were outside the project's scope. So all I can honestly
+claim is that the inference path is built, integrated and runs end to end. Its
+accuracy on real behaviour hasn't been measured. What we delivered is the pipeline,
+and the score doesn't prove anything.
 
-I would rather state this than let a reader assume 0.996 means something it
-doesn't, and it is the first thing I would fix given animals and an ethics
-approval.
+I'd rather say this than have someone assume 0.996 means more than it does. With
+animals and an ethics approval, it's the first thing I'd fix.
 
 ---
 
@@ -73,78 +70,82 @@ approval.
 
 ![a real session, as the dashboard sees it](ai/reports/figures/behaviour-timeline.png)
 
-284 ten-minute windows (about 47 hours) of real, non-synthetic infrared footage of
-a single mouse, run through the same pipeline; the footage was supplied for the
-project, not recorded on this cage. Thigmotaxis is wall-hugging, a standard anxiety proxy
-in rodent work, and it is tracked alongside movement because either alone is
-ambiguous.
+This is 284 ten-minute windows (about 47 hours) of real infrared footage of one
+mouse, run through the same pipeline. The footage was given to us for the project.
+It wasn't recorded on this cage. Thigmotaxis means wall-hugging, which is a common
+anxiety proxy in rodent work. I track it next to movement because either one alone
+is ambiguous.
 
 ![online learners against the fixed offline model](ai/reports/figures/online-agreement.png)
 
-The SGD variants update on the stream while the random forest stays fixed. What
-matters operationally is whether the thing running on the Pi stays close to the
-thing that was validated offline.
+The SGD variants update on the stream while the random forest stays fixed. In
+practice I care whether the model running on the Pi stays close to the one I
+checked offline.
 
 ![confusion matrix on the synthetic test split](ai/reports/figures/confusion.png)
 
-Included for completeness, and it should be read against the separability figure above.
+I've included this for completeness. Read it with the separability figure above in mind.
 
 ## The engineering I would actually point at
 
 ### Volumetric water dosing, and why it runs open-loop
 
-The firmware implements closed-loop dosing, described below. On the assembled
-cage the flow sensor picked up about 200 phantom pulses per second of electrical
-noise, which made the loop cut the pump almost immediately, and the water load
-cell did not track the reservoir. The dashboard therefore doses open-loop: it
-runs the pump for volume / rate seconds, with the rate calibrated on the scale
-(4.5 mL/s) and hard caps on time and volume. The closed loop is ready for when
-the sensor wiring is fixed.
+The firmware has closed-loop dosing, which I describe below. But on the assembled
+cage the flow sensor picked up about 200 fake pulses per second from electrical
+noise. That made the loop cut the pump almost straight away, and the water load
+cell didn't track the reservoir either. So the dashboard doses open-loop. It runs
+the pump for volume / rate seconds, with the rate calibrated on the scale
+(4.5 mL/s), and hard limits on time and volume. The closed loop is ready for when
+the sensor wiring gets fixed.
 
-Delivering an *exact* volume of water to a mouse is harder than running a pump
-for N seconds, and getting it wrong corrupts the intake measurement the whole
-experiment depends on.
+Giving a mouse an exact volume of water is harder than running a pump for N
+seconds. If you get it wrong, the intake measurement the experiment depends on is
+wrong too.
 
-- A **YF-S401 flow sensor** (7.5 pulses/mL) counts what is actually delivered.
-- The pump **stops early and coasts**: water already in the pipe keeps moving
-  after the pump cuts, so the controller subtracts the measured coast volume and
-  lands on target without overshooting.
-- A **normally-closed solenoid valve** closes the instant the pump stops. Without
-  it, gravity siphons the tank through the line and the "dose" silently continues
-  after the controller thinks it finished.
-- If flow stalls mid-dose, the pump **auto-cycles to recover**, so it never reports a dose that did not arrive.
+- A YF-S401 flow sensor (7.5 pulses/mL) counts what actually gets delivered.
+- The pump stops early and coasts. Water in the pipe keeps moving after the pump
+  cuts, so the controller subtracts the measured coast volume and hits the target
+  without overshooting.
+- A normally-closed solenoid valve shuts as soon as the pump stops. Without it,
+  gravity siphons the tank through the line, and the "dose" quietly keeps going
+  after the controller thinks it's done.
+- If flow stalls mid-dose, the pump cycles itself to recover, so it never reports a
+  dose that didn't arrive.
 
-Each of those four is a failure mode that produces *plausible but wrong* data,
-which is the worst kind in an experiment.
+Each of these guards against data that looks fine but is wrong, which I think is
+the worst kind of bug in an experiment.
 
 ### A DHT11 driver written from the datasheet
 
-An earlier firmware (`device/arduino/valve_controller/`) drives the
-temperature/humidity sensor with an inline-protocol implementation written
-against the datasheet's single-wire timing. The current sketch
-(`device/arduino/ivc_sensors/`) reads it through the standard DHT library. Timing diagram in [`docs/HARDWARE.md`](docs/HARDWARE.md).
+An earlier firmware (`device/arduino/valve_controller/`) talks to the
+temperature/humidity sensor with my own implementation of the protocol, written
+from the datasheet's single-wire timing. The current sketch
+(`device/arduino/ivc_sensors/`) uses the standard DHT library instead. The timing
+diagram is in [`docs/HARDWARE.md`](docs/HARDWARE.md).
 
 ### Cameras that survive more than one viewer
 
-The first camera implementation returned 503s as soon as two dashboard sessions
-opened the same stream, each request tried to own the capture device. It now
-runs a **persistent ffmpeg process per camera with a shared frame cache**, so
-concurrent viewers read the same decoded frame and do not fight over the hardware.
+My first camera version returned 503s as soon as two dashboard sessions opened
+the same stream, because each request tried to own the capture device. Now there's
+one ffmpeg process per camera that stays running, with a shared frame cache. Viewers
+read the same decoded frame and don't fight over the hardware.
 
 ### A deployment with no inbound ports
 
-The Pi is reachable at a public HTTPS hostname through a **Cloudflare Tunnel**,
-so there is **no port forwarding and no inbound port open on the lab network**: which matters when the device lives on a university network you do not control.
-Deployment is **pull-only**: a systemd timer polls the repository and redeploys
-within 60 seconds. The Pi never accepts a push and exposes no deploy endpoint,
-so compromising the pipeline does not give you the device.
+You reach the Pi at a public HTTPS hostname through a Cloudflare Tunnel. That
+means no port forwarding and no inbound port open on the lab network, which
+mattered because the device sits on a university network we don't control.
+Deployment only pulls. A systemd timer polls the repo and redeploys within 60
+seconds. The Pi never accepts a push and has no deploy endpoint, so breaking into
+the pipeline doesn't give you the device.
 
 ### Security posture
 
-JWT bearer auth with bcrypt hashing and constant-time verification, a
-rate-limited login endpoint, HSTS, per-path CSP,`X-Frame-Options: DENY`,
-`X-Content-Type-Options: nosniff`, Referrer-Policy, Permissions-Policy, COOP and
-CORP, plus an RFC 9116`security.txt`. CI runs`pip-audit` on every push.
+Auth uses JWT bearer tokens, bcrypt hashing and constant-time checks, and the
+login endpoint is rate-limited. The headers are HSTS, per-path CSP,
+`X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, Referrer-Policy,
+Permissions-Policy, COOP and CORP. There's also an RFC 9116 `security.txt`. CI runs
+`pip-audit` on every push.
 
 ---
 
@@ -181,9 +182,9 @@ flowchart LR
     LC & DHT & FLOW --> ACT
 ```
 
-The Mega owns anything with a deadline; the Pi owns anything that can wait. Load-cell
-calibration lives in the Mega's EEPROM so it survives a power cycle, and the dosing
-loop keeps running if the Pi reboots mid-experiment.
+The Mega handles anything with a deadline, and the Pi handles anything that can
+wait. Load-cell calibration is stored in the Mega's EEPROM so it survives a power
+cycle, and the dosing loop keeps going if the Pi reboots mid-experiment.
 
 | layer | stack |
 |---|---|
@@ -193,8 +194,8 @@ loop keeps running if the Pi reboots mid-experiment.
 | inference | scikit-learn (behaviour), MAD-based streaming anomaly detector |
 | ops | Cloudflare Tunnel, systemd timers, pull-only auto-deploy, GitHub Actions |
 
-Exports run to CSV, JSON, XLSX, PDF and DOCX, streamed and row-capped, so a
-researcher can pull a range straight into R or SPSS.
+You can export to CSV, JSON, XLSX, PDF and DOCX. Exports are streamed and
+row-capped, so a researcher can pull a range straight into R or SPSS.
 
 ---
 
@@ -205,10 +206,10 @@ cp .env.example .env      # then change every default password in it
 docker compose up --build
 ```
 
-The dashboard is at`http://localhost:5173`, the API at`http://localhost:8000`,
-and OpenAPI docs at`/docs`. A **device simulator** ships with the stack, so the
-whole platform runs end to end with no hardware attached, the simulator feeds
-synthetic cages over the same ingest API the Mega uses.
+The dashboard is at `http://localhost:5173`, the API at `http://localhost:8000`,
+and the OpenAPI docs at `/docs`. The stack comes with a device simulator, so you
+can run the whole platform end to end without any hardware. It feeds fake cages
+through the same ingest API the Mega uses.
 
 Backend tests:
 
@@ -216,39 +217,38 @@ Backend tests:
 cd backend && pip install -r requirements.txt pytest && pytest
 ```
 
-18 tests: 8 for auth, role enforcement, security headers, the ingest round-trip and
-health, and 10 for the feeding scheduler's time windows.
+There are 18 tests. 8 cover auth, role checks, security headers, the ingest
+round-trip and health. The other 10 cover the feeding scheduler's time windows.
 
-> The default credentials in`.env.example` are placeholders (`change-me-please`).
-> They are seeded only on first boot and must be changed before any real
+> The default credentials in `.env.example` are placeholders (`change-me-please`).
+> They're only seeded on first boot, and you have to change them before any real
 > deployment.
 
 ---
 
 ## Limitations
 
-The behaviour classifier has never seen a real mouse. See above. Everything
-about the inference path is real; the accuracy figure is not transferable.
+The behaviour classifier has never seen a real mouse (see above). The inference
+path is real, but the accuracy figure doesn't carry over.
 
-No live hardware in this repository. The trained YOLO/tracking weights
-(~43 MB) are excluded, they are a teammate's artefacts and large. The
-behaviour model artefact is not committed either (`*.pkl` is git-ignored): a
-fresh clone uses a deterministic rule-based classifier until
-`ai/training/train.py` is run to produce it.
+There's no live hardware in this repo. I left out the trained YOLO/tracking weights
+(~43 MB) because they're a teammate's work and they're big. The behaviour model
+file isn't committed either (`*.pkl` is git-ignored). A fresh clone uses a fixed
+rule-based classifier until you run `ai/training/train.py` to make it.
 
-Single-cage validation. The data model and simulator support many cages,
-but only one physical cage was ever assembled, so multi-cage behaviour is
-untested against hardware.
+I only tested with one cage. The data model and simulator handle many cages, but
+we only ever built one physical cage, so multi-cage use hasn't been tested on
+hardware.
 
-SQLite. Fine for one Pi and one cage; the write path would need Postgres
-before this scaled to a rack.
+It uses SQLite. That's fine for one Pi and one cage, but the write path would need
+Postgres before this could scale to a rack.
 
 ---
 
 ## Attribution
 
-A three-person team over one semester. Commit counts from the original
-repository, which is the fairest evidence available:
+We were three people working over one semester. These are the commit counts from
+the original repo, which I think is the fairest evidence there is.
 
 | contributor | commits | principal area |
 |---|---:|---|
@@ -256,26 +256,26 @@ repository, which is the fairest evidence available:
 | **Gražvydas Stalmokas** | 29 | behaviour-classification models, multi-animal tracking |
 | **Hadi Hleihel** | 2 |, |
 
-Concretely: I wrote the FastAPI backend and its tests, the React dashboard, the
-Arduino firmware and the Pi-side device services, the camera service, the
-Cloudflare Tunnel and pull-only deploy pipeline, and the documentation. The
-model-training code under`ai/training/`, the behaviour classifiers and the
-YOLO multi-animal tracking, is principally Gražvydas's work; my contribution
-there was the real-time inference integration that runs it in the live loop
-(`ai/inference/`) and the serving path in`backend/app/ai/`.
+In practice I wrote the FastAPI backend and its tests, the React dashboard, the
+Arduino firmware and the device services on the Pi, and the camera service. I also
+set up the Cloudflare Tunnel and the pull-only deploy pipeline, and wrote the docs.
+The model-training code under `ai/training/` (the behaviour classifiers and the
+YOLO multi-animal tracking) is mostly Gražvydas's work. My part there was the
+real-time inference that runs it in the live loop (`ai/inference/`) and the
+serving path in `backend/app/ai/`.
 
 ---
 
 ## References
 
-This is a platform, so the list is short and the entries
-are standards and tools the implementation follows.
+This is a platform project, so the list is short. It's mostly standards and
+datasheets the code follows.
 
-- **Directive 2010/63/EU on the protection of animals used for scientific purposes.** [eur-lex.europa.eu/eli/dir/2010/63/oj](https://eur-lex.europa.eu/eli/dir/2010/63/oj) The regime any live-animal use would fall under. This project never ran on live animals and never obtained ethical approval, which is stated in the scope section and is the reason the behaviour accuracy here is unmeasured.
+- **Directive 2010/63/EU on the protection of animals used for scientific purposes.** [eur-lex.europa.eu/eli/dir/2010/63/oj](https://eur-lex.europa.eu/eli/dir/2010/63/oj) Any use with live animals would fall under this. The project never ran on live animals and never got ethical approval, which is why the behaviour accuracy here is unmeasured.
 - **Leys, Ley, Klein, Bernard, Licata. Detecting outliers: Do not use standard deviation around the mean, use absolute deviation around the median. Journal of Experimental Social Psychology 49, 2013.** [doi:10.1016/j.jesp.2013.03.013](https://doi.org/10.1016/j.jesp.2013.03.013) The median absolute deviation rule used by the anomaly detector.
-- **Component datasheets: HX711 load cell amplifier, DHT11 temperature and humidity sensor, MH-Z19C NDIR CO2 sensor, JXW-02 electrochemical O2 sensor.** The calibration constants and the sampling limits in the firmware come from these.
+- **Component datasheets: HX711 load cell amplifier, DHT11 temperature and humidity sensor, MH-Z19C NDIR CO2 sensor, JXW-02 electrochemical O2 sensor.** I took the calibration constants and sampling limits in the firmware from these.
 
 ## Licence
 
-MIT, see [LICENSE](LICENSE). Client identity, meeting minutes, peer evaluations,
-production hostnames and default credentials have been removed from this extract.
+MIT, see [LICENSE](LICENSE). I removed the client's identity, meeting minutes,
+peer evaluations, production hostnames and default credentials from this extract.
