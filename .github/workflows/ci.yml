@@ -133,3 +133,19 @@ jobs:
           echo "rejected as it should be"
           cp /tmp/metrics.json.bak ai/reports/metrics.json
           bash verify/verify.sh
+      - name: report.py rejects a wrong support and a missing class
+        run: |
+          for change in "r['active']['support'] += 1" "del r['drinking']"; do
+            mkdir -p /tmp/bad/ai/reports
+            python3 -c "
+          import json
+          d = json.load(open('ai/reports/metrics.json'))
+          r = d['test_classification_report']
+          $change
+          json.dump(d, open('/tmp/bad/ai/reports/metrics.json', 'w'))
+          "
+            if python3 verify/report.py /tmp/bad; then
+              echo "report.py accepted: $change"
+              exit 1
+            fi
+          done
