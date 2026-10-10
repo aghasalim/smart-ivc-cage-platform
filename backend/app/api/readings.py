@@ -1073,6 +1073,8 @@ def state_timeline(
     base = day.timestamp()
     buckets: dict[str, dict[int, Counter]] = defaultdict(lambda: defaultdict(Counter))
     for mid, ts, state in rows:
+        if ts.tzinfo is None:  # SQLite drops the zone; stored values are UTC
+            ts = ts.replace(tzinfo=timezone.utc)
         buckets[mid][int((ts.timestamp() - base) // bucket)][state] += 1
     mice = []
     for mid, bks in sorted(buckets.items()):
