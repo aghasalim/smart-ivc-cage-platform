@@ -51,6 +51,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# behavior_analysis lives with the training code; both sides share that one copy
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                "..", "..", "training", "behavioral_monitoring"))
 
 from behavior_analysis import (
     VIDEO_PATH,
