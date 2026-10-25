@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/banner.jpg" alt="Smart IVC Cage: an illustrated laser-cut cage with its electronics deck streaming sensor data to dashboard cards"></p>
+
 # Smart IVC cage, the software platform
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003680.svg)](https://doi.org/10.5281/zenodo.23003680)
