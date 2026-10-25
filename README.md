@@ -11,6 +11,17 @@ itself within 60 seconds of a push.
 We built it for our third-year Industry Project at Howest University of Applied
 Sciences, for an outside client that makes animal-research equipment.
 
+<table>
+  <tr>
+    <td width="40%"><img src="docs/images/assembled-cage.jpg" alt="the assembled laser-cut cage, with pump, relays and flow sensor on the top deck"></td>
+    <td width="60%"><img src="docs/images/dashboard-overview.png" alt="the live dashboard overview with three cages online"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>The assembled cage: electronics deck on top, animal drawer below.</sub></td>
+    <td align="center"><sub>The dashboard it reports to, running against the device simulator.</sub></td>
+  </tr>
+</table>
+
 > This was a three-person team project, and this repo is a cleaned-up extract of
 > it. I made 173 of 204 commits and was responsible for the backend, the
 > dashboard, the device/firmware layer and the deployment pipeline. The
@@ -68,6 +79,11 @@ animals and an ethics approval, it's the first thing I'd fix.
 
 ### Behaviour monitoring on real recordings
 
+![six infrared frames an hour apart, with the region-of-interest line](ai/reports/behavioral_monitoring/outputs/plots/sample_frames.png)
+
+This is what the camera pipeline actually sees: infrared frames an hour apart, with
+the region-of-interest boundary in green.
+
 ![a real session, as the dashboard sees it](ai/reports/figures/behaviour-timeline.png)
 
 This is 284 ten-minute windows (about 47 hours) of real infrared footage of one
@@ -75,6 +91,10 @@ mouse, run through the same pipeline. The footage was given to us for the projec
 It wasn't recorded on this cage. Thigmotaxis means wall-hugging, which is a common
 anxiety proxy in rodent work. I track it next to movement because either one alone
 is ambiguous.
+
+<p align="center"><img src="ai/reports/behavioral_monitoring/outputs/plots/heatmap.png" width="70%" alt="48-hour position heatmap of the tracked mouse"></p>
+
+Where the mouse spent 48 hours, from the tracked centroid in every frame.
 
 ![online learners against the fixed offline model](ai/reports/figures/online-agreement.png)
 
@@ -88,7 +108,33 @@ I've included this for completeness. Read it with the separability figure above 
 
 ## The engineering I would actually point at
 
+### The hardware
+
+<table>
+  <tr>
+    <td><img src="docs/images/bench-prototype.jpg" alt="bench prototype: Arduino Mega, Raspberry Pi 5, relays, flow sensor and camera wired up on a desk"></td>
+    <td><img src="docs/images/enclosure-wiring.jpg" alt="the enclosure opened up, showing the Mega and the wiring harness"></td>
+    <td><img src="docs/images/load-cells.jpg" alt="three load cells wired to the HX711 amplifiers before mounting"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Bench prototype: Mega, Pi 5, relays, flow sensor, camera.</sub></td>
+    <td align="center"><sub>Inside the enclosure: the Mega and the wiring harness.</sub></td>
+    <td align="center"><sub>The three load cells (food, water, animal) before mounting.</sub></td>
+  </tr>
+</table>
+
 ### Volumetric water dosing, and why it runs open-loop
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/images/dosing-board.jpg" alt="top deck: two-channel relay, food-gate servo and YF-S401 flow sensor"></td>
+    <td width="50%"><img src="docs/images/water-calibration.jpg" alt="calibrating the pump flow rate into a measuring jug"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Top deck: relays, servo, YF-S401 flow sensor.</sub></td>
+    <td align="center"><sub>Calibrating the pump rate against a measuring jug.</sub></td>
+  </tr>
+</table>
 
 The firmware has closed-loop dosing, which I describe below. But on the assembled
 cage the flow sensor picked up about 200 fake pulses per second from electrical
@@ -193,6 +239,12 @@ cycle, and the dosing loop keeps going if the Pi reboots mid-experiment.
 | frontend | React 18 + TypeScript + Vite, PWA, 4-language i18n |
 | inference | scikit-learn (behaviour), MAD-based streaming anomaly detector |
 | ops | Cloudflare Tunnel, systemd timers, pull-only auto-deploy, GitHub Actions |
+
+![cage detail page with live movement and RER charts, IR-grid occupancy and current sensor values](docs/images/dashboard-cage-detail.png)
+
+The per-cage view shows live movement and respiratory exchange ratio, IR-grid
+occupancy, and the latest reading from every sensor. I took this screenshot against
+the simulator.
 
 You can export to CSV, JSON, XLSX, PDF and DOCX. Exports are streamed and
 row-capped, so a researcher can pull a range straight into R or SPSS.
