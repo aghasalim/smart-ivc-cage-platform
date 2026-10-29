@@ -3,6 +3,8 @@
 # Smart IVC cage, the software platform
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23003680.svg)](https://doi.org/10.5281/zenodo.23003680)
+[![CI](https://github.com/aghasalim/smart-ivc-cage-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/aghasalim/smart-ivc-cage-platform/actions/workflows/ci.yml)
+[![Open the classifier in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/aghasalim/smart-ivc-cage-platform/blob/main/ai/training/behaviour_classifier_colab.ipynb)
 
 This is the software for an instrumented individually ventilated cage (IVC), the
 kind used in lab animal research. It handles feeding, water dosing, load-cell
@@ -277,6 +279,38 @@ round-trip and health. The other 10 cover the feeding scheduler's time windows.
 > The default credentials in `.env.example` are placeholders (`change-me-please`).
 > They're only seeded on first boot, and you have to change them before any real
 > deployment.
+
+`make help` lists the other shortcuts: `make train` regenerates the dataset,
+trains the classifier and rewrites `ai/reports/`; `make verify` recomputes
+every number in this README.
+
+### Talking to the API
+
+[`examples/`](examples/) has the whole device contract in six curl calls
+(`quickstart.sh`) and a standard-library Python client (`client.py`). The one
+endpoint a cage controller needs is `POST /api/v1/ingest`; the full packet is
+in [`examples/ingest_packet.json`](examples/ingest_packet.json).
+
+### Training the classifier
+
+```bash
+make train      # ~1 min; or open the Colab badge at the top to run it in a browser
+```
+
+What the model is trained on, and why that matters, is in
+[`ai/data/DATASET.md`](ai/data/DATASET.md). The per-class numbers it produces
+are in [`ai/reports/RESULTS.md`](ai/reports/RESULTS.md), generated from
+`metrics.json` so they can't drift from what `verify/` checks.
+
+### Building the cage
+
+[`docs/BUILD_GUIDE.md`](docs/BUILD_GUIDE.md) goes print → wire → flash → Pi →
+water, with a check at the end of each stage and a wiring diagram. The parts
+list is [`docs/BILL_OF_MATERIALS.md`](docs/BILL_OF_MATERIALS.md), the printable
+reservoir is in [`device/mouse-reservoir/`](device/mouse-reservoir/), and when
+something doesn't work, [`docs/TROUBLESHOOTING.md`](docs/TROUBLESHOOTING.md).
+
+![wiring diagram](docs/images/wiring-diagram.svg)
 
 ---
 
