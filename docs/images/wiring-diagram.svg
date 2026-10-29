@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 640" font-family="ui-sans-serif, Helvetica, Arial, sans-serif" font-size="13">
+  <rect width="1040" height="640" fill="#ffffff"/>
+  <text x="20" y="30" font-size="18" font-weight="600" fill="#111">Smart IVC cage wiring, as built</text>
+  <text x="20" y="50" fill="#555">Pin numbers are the ones in device/arduino/ivc_sensors/ivc_sensors.ino. Both relays are active-LOW.</text>
+
+  <!-- ───────── Raspberry Pi ───────── (boxes start at x=50 so wires can run at x=36 on the left) -->
+  <rect x="50" y="90" width="230" height="140" rx="8" fill="#e8f1fb" stroke="#2166ac" stroke-width="2"/>
+  <text x="165" y="114" text-anchor="middle" font-weight="600" fill="#2166ac">Raspberry Pi 5 (8 GB)</text>
+  <text x="165" y="134" text-anchor="middle" fill="#333" font-size="12">FastAPI · dashboard · cameras</text>
+  <text x="165" y="151" text-anchor="middle" fill="#333" font-size="12">bridge · inference · cloudflared</text>
+  <line x1="65" y1="162" x2="265" y2="162" stroke="#2166ac" stroke-opacity="0.3"/>
+  <text x="165" y="182" text-anchor="middle" fill="#333" font-size="12">3× USB-A: Mega, O₂, cameras</text>
+  <text x="165" y="200" text-anchor="middle" fill="#333" font-size="12">27 W USB-C power in</text>
+  <text x="165" y="218" text-anchor="middle" fill="#333" font-size="12">Ethernet or Wi-Fi</text>
+
+  <!-- USB link Pi → Mega -->
+  <line x1="280" y1="178" x2="370" y2="178" stroke="#2166ac" stroke-width="3"/>
+  <text x="325" y="166" text-anchor="middle" fill="#2166ac" font-size="10">USB</text>
+  <text x="325" y="194" text-anchor="middle" fill="#2166ac" font-size="10">/dev/ttyACM0</text>
+
+  <!-- O2 on Pi: wire runs down the left margin, outside the boxes -->
+  <polyline points="65,230 65,247 36,247 36,289 50,289" fill="none" stroke="#e65100" stroke-width="2"/>
+  <rect x="50" y="262" width="230" height="54" rx="6" fill="#fff4e5" stroke="#e65100" stroke-width="1.5"/>
+  <text x="165" y="283" text-anchor="middle" font-weight="600" fill="#e65100">JXW-02 O₂ sensor</text>
+  <text x="165" y="302" text-anchor="middle" fill="#333" font-size="11">CH340 USB adapter, VID 0x1A86</text>
+
+  <!-- Cameras on Pi: same margin, further down -->
+  <polyline points="85,230 85,247 28,247 28,367 50,367" fill="none" stroke="#6a1b9a" stroke-width="2"/>
+  <rect x="50" y="340" width="230" height="54" rx="6" fill="#f3e8fb" stroke="#6a1b9a" stroke-width="1.5"/>
+  <text x="165" y="361" text-anchor="middle" font-weight="600" fill="#6a1b9a">USB UVC cameras (1 to N)</text>
+  <text x="165" y="380" text-anchor="middle" fill="#333" font-size="11">powered hub if more than two</text>
+
+  <!-- ───────── Arduino Mega ───────── -->
+  <rect x="370" y="90" width="260" height="440" rx="8" fill="#eef7ee" stroke="#2e7d32" stroke-width="2"/>
+  <text x="500" y="114" text-anchor="middle" font-weight="600" fill="#2e7d32">Arduino Mega 2560</text>
+  <text x="500" y="133" text-anchor="middle" fill="#333" font-size="12">115 200 baud, 8-N-1, over USB-B</text>
+  <line x1="385" y1="145" x2="615" y2="145" stroke="#2e7d32" stroke-opacity="0.3"/>
+
+  <!-- pin rows: label at x=385, note at x=470 -->
+  <g fill="#222">
+    <text x="385" y="176">D2</text>
+    <text x="385" y="208">D3</text>
+    <text x="385" y="240">D4 / D5</text>
+    <text x="385" y="272">D6 / D7</text>
+    <text x="385" y="304">D8 / D9</text>
+    <text x="385" y="336">D11</text>
+    <text x="385" y="368">D12</text>
+    <text x="385" y="400">D13</text>
+    <text x="385" y="432">D14 / D15</text>
+    <text x="385" y="476">5 V</text>
+    <text x="385" y="504">GND</text>
+  </g>
+  <g fill="#666" font-size="11">
+    <text x="470" y="176">interrupt, pull-up</text>
+    <text x="470" y="208">1-wire</text>
+    <text x="470" y="240">DT / SCK</text>
+    <text x="470" y="272">DT / SCK</text>
+    <text x="470" y="304">DT / SCK</text>
+    <text x="470" y="336">50 Hz PWM</text>
+    <text x="470" y="368">LOW = pump on</text>
+    <text x="470" y="400">LOW = valve open</text>
+    <text x="470" y="432">Serial3, 9600</text>
+    <text x="470" y="476">rail, PSU-backed</text>
+    <text x="470" y="504">star ground to PSU</text>
+  </g>
+
+  <!-- wires Mega → components (y matches the pin row baseline − 4) -->
+  <g stroke-width="2">
+    <line x1="630" y1="172" x2="700" y2="172" stroke="#0277bd"/>
+    <line x1="630" y1="204" x2="700" y2="204" stroke="#0277bd"/>
+    <line x1="630" y1="236" x2="700" y2="236" stroke="#6d4c41"/>
+    <line x1="630" y1="268" x2="700" y2="268" stroke="#6d4c41"/>
+    <line x1="630" y1="300" x2="700" y2="300" stroke="#6d4c41"/>
+    <line x1="630" y1="332" x2="700" y2="332" stroke="#558b2f"/>
+    <line x1="630" y1="364" x2="700" y2="364" stroke="#c62828"/>
+    <line x1="630" y1="396" x2="700" y2="396" stroke="#c62828"/>
+    <line x1="630" y1="428" x2="700" y2="428" stroke="#9e9e9e" stroke-dasharray="6 4"/>
+  </g>
+
+  <!-- ───────── components ───────── x=700..940 -->
+  <g>
+    <rect x="700" y="157" width="240" height="30" rx="5" fill="#e1f5fe" stroke="#0277bd"/>
+    <text x="820" y="177" text-anchor="middle" fill="#111" font-size="12">YF-S401 flow sensor</text>
+
+    <rect x="700" y="189" width="240" height="30" rx="5" fill="#e1f5fe" stroke="#0277bd"/>
+    <text x="820" y="209" text-anchor="middle" fill="#111" font-size="12">DHT11 temperature / humidity</text>
+
+    <rect x="700" y="221" width="240" height="30" rx="5" fill="#efebe9" stroke="#6d4c41"/>
+    <text x="820" y="241" text-anchor="middle" fill="#111" font-size="12">HX711 #1 → FOOD load cell</text>
+
+    <rect x="700" y="253" width="240" height="30" rx="5" fill="#efebe9" stroke="#6d4c41"/>
+    <text x="820" y="273" text-anchor="middle" fill="#111" font-size="12">HX711 #2 → WATER load cell</text>
+
+    <rect x="700" y="285" width="240" height="30" rx="5" fill="#efebe9" stroke="#6d4c41"/>
+    <text x="820" y="305" text-anchor="middle" fill="#111" font-size="12">HX711 #3 → MOUSE load cell</text>
+
+    <rect x="700" y="317" width="240" height="30" rx="5" fill="#f1f8e9" stroke="#558b2f"/>
+    <text x="820" y="337" text-anchor="middle" fill="#111" font-size="12">SG90 food-gate servo</text>
+
+    <rect x="700" y="349" width="240" height="30" rx="5" fill="#ffebee" stroke="#c62828"/>
+    <text x="820" y="369" text-anchor="middle" fill="#111" font-size="12">Relay CH1 → 12 V pump</text>
+
+    <rect x="700" y="381" width="240" height="30" rx="5" fill="#ffebee" stroke="#c62828"/>
+    <text x="820" y="401" text-anchor="middle" fill="#111" font-size="12">Relay CH2 → 12 V solenoid valve</text>
+
+    <rect x="700" y="413" width="240" height="30" rx="5" fill="#fafafa" stroke="#9e9e9e" stroke-dasharray="4 3"/>
+    <text x="820" y="433" text-anchor="middle" fill="#555" font-size="12">MH-Z19C CO₂ (not working yet)</text>
+  </g>
+
+  <!-- 12 V rail, to the right of the two relays -->
+  <line x1="940" y1="364" x2="958" y2="364" stroke="#f9a825" stroke-width="2"/>
+  <line x1="940" y1="396" x2="958" y2="396" stroke="#f9a825" stroke-width="2"/>
+  <rect x="958" y="349" width="66" height="62" rx="5" fill="#fff8e1" stroke="#f9a825" stroke-width="1.5"/>
+  <text x="991" y="368" text-anchor="middle" font-weight="600" fill="#111" font-size="11">12 V ≥ 2 A</text>
+  <text x="991" y="384" text-anchor="middle" fill="#333" font-size="10">12 V → COM</text>
+  <text x="991" y="398" text-anchor="middle" fill="#333" font-size="10">NO → load</text>
+
+  <!-- ───────── water path ───────── -->
+  <rect x="700" y="460" width="324" height="70" rx="6" fill="#e3f2fd" stroke="#1565c0" stroke-width="1.5"/>
+  <text x="862" y="480" text-anchor="middle" font-weight="600" fill="#1565c0" font-size="12">Water path</text>
+  <text x="862" y="498" text-anchor="middle" fill="#333" font-size="11">reservoir → pump → valve → flow sensor → nozzle</text>
+  <text x="862" y="513" text-anchor="middle" fill="#333" font-size="11">dosed open-loop by time at 4.5 mL/s</text>
+  <text x="862" y="526" text-anchor="middle" fill="#333" font-size="11">valve closes after the pump stops (no siphon)</text>
+
+  <!-- ───────── footnotes ───────── -->
+  <g font-size="11" fill="#555">
+    <text x="20" y="570">Not shown: 5 V and GND from the PSU to every module, the Pi's own 27 W supply, and the network link to the Cloudflare tunnel.</text>
+    <text x="20" y="588">The flow sensor is wired but unused for dosing: it picked up ~200 phantom pulses/s of noise on this build.</text>
+    <text x="20" y="606">Full pin table, firmware caveats and protocols: docs/HARDWARE.md §3.</text>
+  </g>
+</svg>

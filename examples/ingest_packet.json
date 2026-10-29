@@ -1,0 +1,13 @@
+{
+  "cage_id": "cage-001",
+  "ts": "2026-10-29T20:14:31Z",
+  "seq": 1,
+  "sensors": {
+    "feeding":     { "delivered_g": 1.42, "remaining_g": 18.3, "wasted_g": 0.05, "gate_state": "open" },
+    "water":       { "flow_ml": 0.18, "tank_ml": 198.4 },
+    "metabolic":   { "vo2_ml_min_kg": 38.9, "vco2_ml_min_kg": 31.2, "rer": 0.80, "ee_kcal_h": 0.42 },
+    "behaviour":   { "grid_cells": [0,0,0,1,2,0,0,1,3,0,0,0,0,0,0,0], "movement_cm": 4.2 },
+    "weighing":    { "animal_g": 24.8 },
+    "environment": { "temperature_c": 22.4, "humidity_pct": 51.0 }
+  }
+}
