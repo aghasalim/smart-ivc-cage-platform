@@ -15,6 +15,11 @@ itself within 60 seconds of a push.
 We built it for our third-year Industry Project at Howest University of Applied
 Sciences, for an outside client that makes animal-research equipment.
 
+<p align="center">
+  <a href="https://www.pcbway.com/"><img src="docs/images/pcbway-logo.png" width="150" alt="PCBWay"></a><br>
+  <sub>The cage's PCBs are manufactured and assembled by <a href="https://www.pcbway.com/">PCBWay</a>, who sponsored this project. See <a href="#pcbs-manufactured-and-assembled-by-pcbway">my review</a>.</sub>
+</p>
+
 <table>
   <tr>
     <td width="40%"><img src="docs/images/assembled-cage.jpg" alt="the assembled laser-cut cage, with pump, relays and flow sensor on the top deck"></td>
@@ -126,6 +131,38 @@ I've included this for completeness. Read it with the separability figure above 
     <td align="center"><sub>The three load cells (food, water, animal) before mounting.</sub></td>
   </tr>
 </table>
+
+### PCBs manufactured and assembled by PCBWay
+
+<a href="https://www.pcbway.com/"><img src="docs/images/pcbway-logo.png" width="150" align="right" alt="PCBWay"></a>
+
+[PCBWay](https://www.pcbway.com/) sponsored this project by covering the
+fabrication and assembly of 10 boards. I'm grateful for it: as a student project,
+a full assembly run would otherwise have been out of budget.
+
+The boards are on their way. Once they arrive and are in the cage, this section
+gets photos and an honest write-up of how it went:
+
+- **PCB quality:** finish, silkscreen, solder mask, how they compare to the design
+- **Assembly quality:** component placement, solder joints, anything I had to rework
+- **Service:** the ordering process, design review, communication and shipping
+- **Overall:** whether I'd order from them again
+
+<!--
+Photos, when the boards arrive (put them in docs/images/):
+<table>
+  <tr>
+    <td><img src="docs/images/pcbway-bare-board.jpg" alt="the bare PCB, front and back"></td>
+    <td><img src="docs/images/pcbway-assembled-board.jpg" alt="the assembled board"></td>
+    <td><img src="docs/images/pcbway-board-in-cage.jpg" alt="the board mounted in the cage"></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Bare board.</sub></td>
+    <td align="center"><sub>Assembled by PCBWay.</sub></td>
+    <td align="center"><sub>Mounted in the cage.</sub></td>
+  </tr>
+</table>
+-->
 
 ### Volumetric water dosing, and why it runs open-loop
 
