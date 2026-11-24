@@ -40,6 +40,20 @@ Sciences, for an outside client that makes animal-research equipment.
 
 ---
 
+<details>
+<summary>Contents</summary>
+
+- [The number I am not going to advertise](#the-number-i-am-not-going-to-advertise)
+- [The engineering I would actually point at](#the-engineering-i-would-actually-point-at)
+- [Architecture](#architecture)
+- [Running it](#running-it)
+- [Limitations](#limitations)
+- [Attribution](#attribution)
+- [References](#references)
+- [Licence](#licence)
+
+</details>
+
 ## The number I am not going to advertise
 
 Our original report opens with macro-F1 0.996 for the behaviour classifier.
